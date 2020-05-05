@@ -26,24 +26,6 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  String get home_meows_desc {
-    return Intl.message(
-      'Player for Apple Music',
-      name: 'home_meows_desc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  String get home_ixn_desc {
-    return Intl.message(
-      'Editor for apps localizations',
-      name: 'home_ixn_desc',
-      desc: '',
-      args: [],
-    );
-  }
-
   String get error_reload {
     return Intl.message(
       'Reload',

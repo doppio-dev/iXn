@@ -1,0 +1,27 @@
+- branch: master
+  build:
+  release_nottes:
+  destinations: beta_group
+  mandatory_update: false
+  notify_testers: true
+  type: beta
+  prerelease: true
+  draft: false
+- branch: pull
+  build:
+  release_nottes:
+  destinations: alpha_group
+  mandatory_update: false
+  notify_testers: true
+  type: alpha
+  prerelease: true
+  draft: false
+- branch: release
+  build:
+  release_nottes:
+  destinations: dogfood
+  mandatory_update: false
+  notify_testers: true
+  type: beta
+  prerelease: true
+  draft: false

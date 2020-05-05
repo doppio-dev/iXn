@@ -40,7 +40,7 @@ jobs:
           build_dir: build/web
           fqdn: ixn.doppio.dev
         env:
-          GITHUB_TOKEN: ${{ secrets.ci_token }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
 
   build_mac_os:
     runs-on: self-hosted
@@ -108,7 +108,7 @@ jobs:
         id: create-release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ci_token }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
           tag_name: v_${{ steps.app_ver.outputs.app_ver  }}_${{ steps.dist_config.outputs.release_type }}
           release_name: ${{ steps.dist_config.outputs.release_type }} v_${{ steps.app_ver.outputs.app_ver  }}
@@ -123,7 +123,7 @@ jobs:
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ci_token }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: macos/build.zip

@@ -1,4 +1,3 @@
-import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +21,6 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   HomeScreenState();
   final PageController pageController = PageController(initialPage: 0, viewportFraction: 0.8, keepPage: true);
-  int _selectedIndex = 0;
   @override
   void initState() {
     super.initState();

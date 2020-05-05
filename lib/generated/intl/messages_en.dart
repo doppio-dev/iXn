@@ -20,8 +20,5 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static _notInlinedMessages(_) => <String, Function>{
-        "home_ixn_desc": MessageLookupByLibrary.simpleMessage("Editor for apps localizations"),
-        "home_meows_desc": MessageLookupByLibrary.simpleMessage("Player for Apple Music")
-      };
+  static _notInlinedMessages(_) => <String, Function>{"error_reload": MessageLookupByLibrary.simpleMessage("Reload")};
 }
