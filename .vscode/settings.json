@@ -1,0 +1,7 @@
+{
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.lineLength": 150,
+  "dart.analysisExcludedFolders": ["lib/generated"]
+}

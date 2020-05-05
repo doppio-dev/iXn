@@ -1,0 +1,131 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build_web:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Running flutter doctor
+        run: flutter doctor
+      - name: Enable web
+        run: flutter config --enable-web
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Change version
+        run: sh _bump.sh $GITHUB_REF $GITHUB_RUN_NUMBER
+
+      - name: Build web release
+        run: flutter build web --release
+
+      - name: Use random for fix cache
+        run: |
+          ran=$RANDOM
+          echo $ran
+          mv -i build/web/main.dart.js build/web/main.$ran.dart.js
+          mv -i build/web/main.dart.js.map build/web/main.$ran.dart.js.map
+          sed -i '' 's/main\.dart/main\.'$ran'\.dart/g' ./build/web/index.html
+          sed -i '' 's/main\.dart/main\.'$ran'\.dart/g' ./build/web/flutter_service_worker.js
+          
+      - name: GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v1.4.1
+        with:
+          build_dir: build/web
+          fqdn: ixn.doppio.dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.ci_token }}
+
+  build_mac_os:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Running flutter doctor
+        run: flutter doctor
+      - name: Enable macos
+        run: flutter config --enable-macos-desktop
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Change version
+        run: sh _bump.sh $GITHUB_REF $GITHUB_RUN_NUMBER
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Build macos release
+        run: flutter build macos --release
+
+      - name: Build dmg
+        run: sh _dmg.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: macos-dmg
+          path: release/macos/
+
+  distribute:
+    needs: [build_mac_os]
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Download artifact
+        uses: actions/download-artifact@v1.0.0
+        with:
+          name: macos-dmg
+          path: release/macos/
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Get application version
+        id: app_ver
+        run: echo "::set-output name=app_ver::""$(flutter pub run doppio_utils_config:get_ver)+($GITHUB_RUN_NUMBER)"
+      
+      # https://github.com/ahdbilal/firstiosapp/blob/master/.github/workflows/build_distribute.yml
+      - name: Read Configuration
+        id: dist_config
+        run: |
+          release_type=$(flutter pub run doppio_utils_config:get_config_distr path=.distribute/config.yml branch=master propertyName=release_type)
+          draft=$(flutter pub run doppio_utils_config:get_config_distr path=.distribute/config.yml branch=master propertyName=draft)
+          prerelease=$(flutter pub run doppio_utils_config:get_config_distr path=.distribute/config.yml branch=master propertyName=prerelease)
+          echo "::set-output name=release_type::"${release_type//\'}""
+          echo "::set-output name=draft::"${draft//\'}""
+          echo "::set-output name=prerelease::"${prerelease//\'}""
+
+      - name: Create a Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ci_token }}
+        with:
+          tag_name: v_${{ steps.app_ver.outputs.app_ver  }}_${{ steps.dist_config.outputs.release_type }}
+          release_name: ${{ steps.dist_config.outputs.release_type }} v_${{ steps.app_ver.outputs.app_ver  }}
+          body: ${{ env.COMMIT_MESSAGE }}
+          draft: ${{ steps.dist_config.outputs.draft }}
+          prerelease: ${{ steps.dist_config.outputs.prerelease }}
+
+      - name: Zip Build
+        run: zip -rj macos/build.zip release/macos/
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ci_token }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: macos/build.zip
+          asset_name: macos-build.zip
+          asset_content_type: application/zip

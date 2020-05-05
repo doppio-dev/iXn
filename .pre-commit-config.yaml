@@ -1,0 +1,8 @@
+- repo: local
+  hooks:
+    - id: flutter-format
+      name: format
+      entry: dartfmt -l 150 -w .
+      language: system
+      files: lib/* # Only format source files
+      exclude: lib/l10n/ # Exclude utils
