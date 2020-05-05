@@ -1,32 +1,29 @@
-import 'package:doppio_dev_ixn/service/translate_service.dart';
+import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:doppio_dev_ixn/home/index.dart';
+import 'package:doppio_dev_ixn/project/index.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
+class ProjectScreen extends StatefulWidget {
+  const ProjectScreen({
     Key key,
-    @required HomeBloc homeBloc,
-  })  : _homeBloc = homeBloc,
+    @required ProjectBloc projectBloc,
+  })  : _projectBloc = projectBloc,
         super(key: key);
 
-  final HomeBloc _homeBloc;
+  final ProjectBloc _projectBloc;
 
   @override
-  HomeScreenState createState() {
-    return HomeScreenState();
+  ProjectScreenState createState() {
+    return ProjectScreenState();
   }
 }
 
-class HomeScreenState extends State<HomeScreen> {
-  HomeScreenState();
-  final PageController pageController = PageController(initialPage: 0, viewportFraction: 0.8, keepPage: true);
+class ProjectScreenState extends State<ProjectScreen> {
+  ProjectScreenState();
+
   @override
   void initState() {
     super.initState();
-    if (widget._homeBloc.state is UnHomeState) {
-      _load();
-    }
   }
 
   @override
@@ -36,18 +33,20 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-        bloc: widget._homeBloc,
+    return BlocBuilder<ProjectBloc, ProjectState>(
+        bloc: widget._projectBloc,
         builder: (
           BuildContext context,
-          HomeState currentState,
+          ProjectState currentState,
         ) {
-          if (currentState is UnHomeState) {
+          ContextService().buidlContext(context);
+          if (currentState is UnProjectState) {
+            _load();
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (currentState is ErrorHomeState) {
+          if (currentState is ErrorProjectState) {
             return Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -57,15 +56,15 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 32.0),
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: Text(TranslateService().locale.error_reload),
+                    child: Text('reload'),
                     onPressed: _load,
                   ),
                 ),
               ],
             ));
           }
-          if (currentState is InHomeState) {
-            return Text('Hello');
+          if (currentState is InProjectState) {
+            return Text(currentState.project?.id);
           }
           return Center(
             child: CircularProgressIndicator(),
@@ -73,7 +72,7 @@ class HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  void _load() {
-    widget._homeBloc.add(LoadHomeEvent());
+  void _load([bool isError = false]) {
+    widget._projectBloc.add(LoadProjectEvent());
   }
 }

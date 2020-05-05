@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class HomeProvider {
+class ProjectProvider {
   Future<void> loadAsync(String token) async {
     /// write from keystore/keychain
     await Future.delayed(Duration(seconds: 2));

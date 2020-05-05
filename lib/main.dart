@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:doppio_dev_ixn/projects/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/app/index.dart';
@@ -23,6 +24,7 @@ Future<void> init({bool ensureInitialized = true}) async {
       WidgetsFlutterBinding.ensureInitialized();
     }
     BlocSupervisor.delegate = SimpleBlocDelegate();
+    await ProjectsCacheManager().openAsync();
   } catch (error, stackTrace) {
     log('$error', name: 'Main', error: '$error', stackTrace: stackTrace);
   }

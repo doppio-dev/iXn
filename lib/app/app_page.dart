@@ -1,4 +1,5 @@
-import 'package:doppio_dev_ixn/home/index.dart';
+import 'package:doppio_dev_ixn/project/index.dart';
+import 'package:doppio_dev_ixn/projects/index.dart';
 import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,7 +73,7 @@ class _AppPageState extends State<AppPage> with WidgetsBindingObserver {
               builder: (contextHome, snapshot) {
                 ContextService().buidlContext(contextHome);
                 TranslateService().update(contextHome);
-                return HomePage();
+                return ProjectsPage();
               }),
           routes: _routes(),
         );
@@ -83,7 +84,8 @@ class _AppPageState extends State<AppPage> with WidgetsBindingObserver {
   Map<String, WidgetBuilder> _routes() {
     return <String, WidgetBuilder>{
       '': (BuildContext context) => AppPage(),
-      HomePage.routeName: (BuildContext context) => HomePage(),
+      ProjectsPage.routeName: (BuildContext context) => ProjectsPage(),
+      ProjectPage.routeName: (BuildContext context) => ProjectPage(),
     };
   }
 
