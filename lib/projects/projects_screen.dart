@@ -1,6 +1,8 @@
 import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
+import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:doppio_dev_ixn/service/context_service.dart';
+import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
@@ -78,16 +80,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
                     },
                     child: Text('add'),
                   ),
-                  ...currentState.projects
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                                onTap: () {
-                                  unawaited(navigatorKey.currentState.pushNamed(ProjectPage.routeName, arguments: {'id': e.id}));
-                                },
-                                child: Text(e.name ?? e.id ?? 'not set')),
-                          ))
-                      .toList(),
+                  ...currentState.projects.map(card).toList(),
                 ],
               ),
             );
@@ -96,6 +89,42 @@ class ProjectsScreenState extends State<ProjectsScreen> {
             child: CircularProgressIndicator(),
           );
         });
+  }
+
+  Widget card(ProjectModel e) {
+    final i10n = TranslateService().locale;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () {
+          unawaited(
+            navigatorKey.currentState.pushNamed(
+              ProjectPage.routeName,
+              arguments: {'id': e.id},
+            ),
+          );
+          if (e.name == null) {
+            unawaited(navigatorKey.currentState.pushNamed(
+              ProjectSettingPage.routeName,
+              arguments: {'id': e.id},
+            ));
+          }
+        },
+        child: Card(
+          elevation: 7,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text('${i10n.projects_card_name}: ${e.name}'),
+                Text('${i10n.projects_card_locale}: ${e.defaultLocale}'),
+                Text('${i10n.projects_card_locales}: ${e.locales}'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _load() {

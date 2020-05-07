@@ -1,3 +1,9 @@
 {
+    "projects_card_name" : "Name",
+    "projects_card_locale" : "Locale",
+    "projects_card_locales" : "Locales",
+    "project_name" : "Name",
+    "project_key" : "Key",
+    "project_default_locale" : "Default Locale",
     "error_reload" : "Reload"
 }

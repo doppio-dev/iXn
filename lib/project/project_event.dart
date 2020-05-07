@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
-import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -21,18 +20,18 @@ class UnProjectEvent extends ProjectEvent {
 
 class LoadProjectEvent extends ProjectEvent {
   final projectsCacheManager = ProjectsCacheManager();
+  final String id;
 
   @override
   String toString() => 'LoadProjectEvent';
 
-  LoadProjectEvent();
+  LoadProjectEvent(this.id);
 
   @override
   Stream<ProjectState> applyAsync({ProjectState currentState, ProjectBloc bloc}) async* {
     try {
       yield UnProjectState(0);
-      final args = ModalRoute.of(ContextService().buildContext).settings.arguments as Map<String, Object>;
-      final projectMap = await projectsCacheManager.getItemAsync(args['id'] as String);
+      final projectMap = await projectsCacheManager.getItemAsync(id);
       final project = ProjectModel.fromMap(projectMap as Map<dynamic, dynamic>);
       yield InProjectState(0, project);
     } catch (_, stackTrace) {

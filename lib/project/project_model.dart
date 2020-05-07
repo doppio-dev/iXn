@@ -8,19 +8,31 @@ class ProjectModel extends Equatable {
   final String name;
   final List<String> locales;
   final String defaultLocale;
+  final List<KeyModel> keys;
   final List<WordModel> words;
+  Map<String, WordModel> wordMap;
+
   ProjectModel({
     @required this.id,
     this.name,
+    this.keys,
     this.locales,
     this.defaultLocale,
     this.words,
-  });
+  }) {
+    wordMap = {};
+    if (words != null) {
+      for (var item in words) {
+        wordMap['${item.keyDiff}'] = item;
+      }
+    }
+  }
 
   @override
   List<Object> get props => [
         id,
         name,
+        keys,
         locales,
         defaultLocale,
         words,
@@ -30,6 +42,7 @@ class ProjectModel extends Equatable {
     return {
       'id': id,
       'name': name,
+      'keys': keys,
       'locales': locales,
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
@@ -44,7 +57,8 @@ class ProjectModel extends Equatable {
       name: map['name']?.toString(),
       locales: List<String>.from(map['locales'] as Iterable<dynamic> ?? []),
       defaultLocale: map['defaultLocale']?.toString(),
-      words: List<WordModel>.from((map['words'] as List<Map<dynamic, dynamic>> ?? [])?.map(WordModel.fromMap)),
+      keys: List<KeyModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => KeyModel.fromMap(c as Map<dynamic, dynamic>))),
+      words: List<WordModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => WordModel.fromMap(c as Map<dynamic, dynamic>))),
     );
   }
 
@@ -57,14 +71,62 @@ class ProjectModel extends Equatable {
     String name,
     List<String> locales,
     String defaultLocale,
+    List<KeyModel> keys,
     List<WordModel> words,
   }) {
     return ProjectModel(
       id: id ?? this.id,
       name: name ?? this.name,
-      locales: locales ?? this.locales,
+      locales: locales != null ? [...locales] : [...this.locales ?? []],
       defaultLocale: defaultLocale ?? this.defaultLocale,
+      keys: keys ?? this.keys,
       words: words ?? this.words,
+    );
+  }
+}
+
+class KeyModel extends Equatable {
+  final String id;
+  final String value;
+
+  KeyModel({
+    this.id,
+    this.value,
+  });
+
+  @override
+  List<Object> get props => [
+        id,
+        value,
+      ];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'value': value,
+    };
+  }
+
+  static KeyModel fromMap(Map<dynamic, dynamic> map) {
+    if (map == null) return null;
+
+    return KeyModel(
+      id: map['id']?.toString(),
+      value: map['value']?.toString(),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static KeyModel fromJson(String source) => fromMap(json.decode(source) as Map<dynamic, dynamic>);
+
+  KeyModel copyWith({
+    String id,
+    String value,
+  }) {
+    return KeyModel(
+      id: id ?? this.id,
+      value: value ?? this.value,
     );
   }
 }
@@ -73,7 +135,7 @@ class WordModel extends Equatable {
   final String id;
   final int order;
   final int maxLength;
-  final String key;
+  final String keyId;
   final String locale;
   final String value;
   final bool approved;
@@ -84,13 +146,13 @@ class WordModel extends Equatable {
   final List<ImageModel> images;
   final String notes;
 
-  String get keyDiff => '$key$locale';
+  String get keyDiff => '$keyId$locale';
 
   WordModel({
-    this.id,
+    @required this.id,
     this.order,
     this.maxLength,
-    this.key,
+    this.keyId,
     this.locale,
     this.value,
     this.approved,
@@ -105,7 +167,7 @@ class WordModel extends Equatable {
         id,
         order,
         maxLength,
-        key,
+        keyId,
         locale,
         value,
         approved,
@@ -120,7 +182,7 @@ class WordModel extends Equatable {
       'id': id,
       'order': order,
       'maxLength': maxLength,
-      'key': key,
+      'key': keyId,
       'locale': locale,
       'value': value,
       'approved': approved,
@@ -138,7 +200,7 @@ class WordModel extends Equatable {
       id: map['id']?.toString(),
       order: map['order'] as int,
       maxLength: map['maxLength'] as int,
-      key: map['key']?.toString(),
+      keyId: map['key']?.toString(),
       locale: map['locale']?.toString(),
       value: map['value']?.toString(),
       approved: map['approved'] as bool,
@@ -157,7 +219,7 @@ class WordModel extends Equatable {
     String id,
     int order,
     int maxLength,
-    String key,
+    String keyId,
     String locale,
     String value,
     bool approved,
@@ -170,7 +232,7 @@ class WordModel extends Equatable {
       id: id ?? this.id,
       order: order ?? this.order,
       maxLength: maxLength ?? this.maxLength,
-      key: key ?? this.key,
+      keyId: keyId ?? this.keyId,
       locale: locale ?? this.locale,
       value: value ?? this.value,
       approved: approved ?? this.approved,

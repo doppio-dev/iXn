@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:meta/meta.dart';
 
@@ -48,6 +49,7 @@ class AddProjectsEvent extends ProjectsEvent {
         final newProjects = [...currentState.projects]..add(projectModel);
         yield currentState.copyWith(projects: newProjects);
         unawaited(navigatorKey.currentState.pushNamed(ProjectPage.routeName, arguments: {'id': projectModel.id}));
+        unawaited(navigatorKey.currentState.pushNamed(ProjectSettingPage.routeName, arguments: {'id': projectModel.id}));
       }
     } catch (_, stackTrace) {
       developer.log('$_', name: 'LoadProjectsEvent', error: _, stackTrace: stackTrace);

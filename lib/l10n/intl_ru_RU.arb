@@ -1,3 +1,6 @@
 {
+    "projects_card_name" : "Имя",
+    "projects_card_locale" : "Локаль",
+    "projects_card_locales" : "Локалей",
     "error_reload" : "Перегрузить"
 }

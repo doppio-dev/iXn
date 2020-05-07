@@ -65,6 +65,10 @@ dev_dependencies:
       url: https://github.com/Gorniv/hive
       ref: master
       path: hive_generator
+  
+  
+  dropdownfield: 1.0.3 # change?
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.

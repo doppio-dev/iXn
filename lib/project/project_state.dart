@@ -55,6 +55,16 @@ class InProjectState extends ProjectState {
   InProjectState getNewVersion() {
     return InProjectState(version + 1, project);
   }
+
+  InProjectState copyWith({
+    int version,
+    ProjectModel project,
+  }) {
+    return InProjectState(
+      version ?? this.version,
+      project ?? this.project,
+    );
+  }
 }
 
 class ErrorProjectState extends ProjectState {

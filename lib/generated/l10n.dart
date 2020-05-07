@@ -26,6 +26,60 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  String get projects_card_name {
+    return Intl.message(
+      'Name',
+      name: 'projects_card_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_card_locale {
+    return Intl.message(
+      'Locale',
+      name: 'projects_card_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_card_locales {
+    return Intl.message(
+      'Locales',
+      name: 'projects_card_locales',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_name {
+    return Intl.message(
+      'Name',
+      name: 'project_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_key {
+    return Intl.message(
+      'Key',
+      name: 'project_key',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_default_locale {
+    return Intl.message(
+      'Default Locale',
+      name: 'project_default_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get error_reload {
     return Intl.message(
       'Reload',

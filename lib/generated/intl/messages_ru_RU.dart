@@ -20,5 +20,10 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ru_RU';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static _notInlinedMessages(_) => <String, Function>{"error_reload": MessageLookupByLibrary.simpleMessage("Перегрузить")};
+  static _notInlinedMessages(_) => <String, Function>{
+        "error_reload": MessageLookupByLibrary.simpleMessage("Перегрузить"),
+        "projects_card_locale": MessageLookupByLibrary.simpleMessage("Локаль"),
+        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Локалей"),
+        "projects_card_name": MessageLookupByLibrary.simpleMessage("Имя")
+      };
 }
