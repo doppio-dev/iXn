@@ -245,7 +245,7 @@ class WordModel extends Equatable {
       approved: map['approved'] as bool,
       auto: map['auto'] as bool,
       staticTranslate: map['staticTranslate'] as bool,
-      images: List<ImageModel>.from(((map['images'] as List<dynamic>).cast<Map<dynamic, dynamic>>() ?? [])?.map(ImageModel.fromMap)),
+      images: List<ImageModel>.from(((map['images'] as List<dynamic> ?? []).cast<Map<dynamic, dynamic>>() ?? [])?.map(ImageModel.fromMap)),
       notes: map['notes']?.toString(),
     );
   }
