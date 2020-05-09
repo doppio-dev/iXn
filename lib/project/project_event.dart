@@ -68,3 +68,36 @@ class SaveProjectEvent extends ProjectEvent {
     }
   }
 }
+
+class LoadSettingProjectEvent extends ProjectEvent {
+  final projectsCacheManager = ProjectsCacheManager();
+  final String id;
+
+  @override
+  String toString() => 'LoadSettingProjectEvent';
+
+  LoadSettingProjectEvent(this.id);
+
+  @override
+  Stream<ProjectState> applyAsync({ProjectState currentState, ProjectBloc bloc}) async* {
+    try {
+      if (currentState is InProjectState) {
+        if (currentState.project.id != id) {
+          return;
+        }
+        final projectMap = await projectsCacheManager.getItemAsync(id);
+        final project = ProjectModel.fromMap(projectMap as Map<dynamic, dynamic>);
+        yield currentState.copyWith(
+            project: project.copySettings(
+              name: project.name,
+              defaultLocale: project.defaultLocale,
+              locales: project.locales,
+            ),
+            version: currentState.version + 1);
+      }
+    } catch (_, stackTrace) {
+      developer.log('$_', name: 'LoadSettingProjectEvent', error: _, stackTrace: stackTrace);
+      yield ErrorProjectState(0, _?.toString());
+    }
+  }
+}

@@ -130,7 +130,10 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
               selectedValue: projectModel.defaultLocale,
               select: (newValue) {
                 setState(() {
-                  projectModel = projectModel.copyWith(defaultLocale: newValue?.toString(), locales: projectModel.locales..add(newValue.toString()));
+                  projectModel.defaultLocale = newValue?.toString();
+                  if (!projectModel.locales.contains(newValue)) {
+                    projectModel.locales.add(newValue.toString());
+                  }
                 });
               },
             ),

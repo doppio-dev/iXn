@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:doppio_dev_ixn/generated/l10n.dart';
 import 'package:flutter/widgets.dart';
+import 'package:file_access/file_access.dart' as file_access;
+import 'package:path/path.dart' as path;
 
 class TranslateService {
   static final _translateServiceSingleton = TranslateService._internal();
@@ -96,6 +100,25 @@ class TranslateService {
     'zh': 'Chinese (plus 2 country variations and 2 scripts)',
     'zu': 'Zulu',
   };
+
+  Future<Map<String, Map<String, String>>> importFiles() async {
+    final newFiles = (await file_access.open(true, false, allowedTypes: ['json', 'arb']));
+    final filesData = <String, Map<String, String>>{};
+    for (var item in newFiles) {
+      var name = path.basename(item.path);
+      var locale = name.replaceAll('intl_', '').replaceAll('_', '-').split('-')[0];
+      var text = await item.readAsString();
+      var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
+      if (filesData.containsKey(locale)) {
+        throw Exception('dublicate locale');
+      }
+      if (!TranslateService.localesCountry.containsKey(locale)) {
+        throw Exception(TranslateService().locale.error_locale_notsupport(locale, item.path));
+      }
+      filesData[locale] = json;
+    }
+    return filesData;
+  }
 
   /// {@endtemplate}
 }

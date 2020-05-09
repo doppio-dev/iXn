@@ -1,3 +1,4 @@
+import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/material.dart';
 
@@ -7,9 +8,11 @@ class LangDropdownWidget extends StatefulWidget {
   final String labelText;
   final Function(String value) select;
 
-  String selectedValue;
+  final String selectedValue;
+  final double width;
 
-  LangDropdownWidget({Key key, this.options, this.valueRequired = false, this.labelText, this.select, this.selectedValue}) : super(key: key);
+  LangDropdownWidget({Key key, this.options, this.valueRequired = false, this.labelText, this.select, this.selectedValue, this.width})
+      : super(key: key);
 
   @override
   _LangDropdownWidgetState createState() => _LangDropdownWidgetState();
@@ -35,17 +38,20 @@ class _LangDropdownWidgetState extends State<LangDropdownWidget> {
               isDense: true,
               onChanged: (String newValue) {
                 setState(() {
-                  widget.selectedValue = newValue;
+                  widget.select(newValue);
                 });
-                widget.select(newValue);
-                FocusScope.of(context).focusInDirection(TraversalDirection.down);
+                // FocusScope.of(context).focusInDirection(TraversalDirection.down);
               },
               items: widget.options.map((String _code) {
                 return DropdownMenuItem<String>(
                   value: _code,
-                  child: Text(
-                    '$_code - ${TranslateService.localesCountry[_code]}',
-                    overflow: TextOverflow.clip,
+                  child: Container(
+                    width: widget.width,
+                    child: Text(
+                      '$_code - ${TranslateService.localesCountry[_code]}',
+                      overflow: TextOverflow.clip,
+                      maxLines: 1,
+                    ),
                   ),
                 );
               }).toList(),

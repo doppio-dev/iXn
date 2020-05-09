@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 class ProjectModel extends Equatable {
   final String id;
   final String name;
   final List<String> locales;
-  final String defaultLocale;
+  String defaultLocale;
   final List<KeyModel> keys;
   final List<WordModel> words;
   Map<String, WordModel> wordMap;
@@ -43,7 +44,7 @@ class ProjectModel extends Equatable {
       'id': id,
       'name': name,
       'keys': keys?.map((x) => x?.toMap())?.toList(),
-      'locales': locales,
+      'locales': locales.toSet().toList(),
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
@@ -82,6 +83,44 @@ class ProjectModel extends Equatable {
       keys: keys ?? this.keys,
       words: words ?? this.words,
     );
+  }
+
+  ProjectModel copySettings({
+    @required String name,
+    @required List<String> locales,
+    @required String defaultLocale,
+  }) {
+    return ProjectModel(
+      id: id,
+      name: name ?? this.name,
+      locales: locales != null ? [...locales] : [...this.locales ?? []],
+      defaultLocale: defaultLocale ?? this.defaultLocale,
+      keys: keys,
+      words: words,
+    );
+  }
+
+  void import(String locale, Map<String, String> filesData) {
+    defaultLocale ??= locale;
+    if (!locales.contains(locale)) {
+      locales.add(locale);
+    }
+    for (var item in filesData.keys) {
+      var key = keys.firstWhere((element) => element.value == item, orElse: () => null);
+      if (key == null) {
+        key = KeyModel(id: Uuid().v4(), value: item);
+        keys.add(key);
+      }
+      final newKeyDiff = '${key.id}$locale';
+      if (wordMap.containsKey(newKeyDiff)) {
+        // TODO: version for approve changed
+        wordMap[newKeyDiff].value = filesData[item];
+      } else {
+        final newWord = WordModel(id: Uuid().v4(), keyId: key.id, locale: locale, value: filesData[item]);
+        wordMap[newKeyDiff] = newWord;
+        words.add(newWord);
+      }
+    }
   }
 }
 
@@ -137,7 +176,7 @@ class WordModel extends Equatable {
   final int maxLength;
   final String keyId;
   final String locale;
-  final String value;
+  String value;
   final bool approved;
   final bool auto;
 
@@ -206,7 +245,7 @@ class WordModel extends Equatable {
       approved: map['approved'] as bool,
       auto: map['auto'] as bool,
       staticTranslate: map['staticTranslate'] as bool,
-      images: List<ImageModel>.from((map['images'] as List<Map<dynamic, dynamic>>)?.map(ImageModel.fromMap)),
+      images: List<ImageModel>.from(((map['images'] as List<dynamic>).cast<Map<dynamic, dynamic>>() ?? [])?.map(ImageModel.fromMap)),
       notes: map['notes']?.toString(),
     );
   }

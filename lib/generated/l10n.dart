@@ -142,6 +142,24 @@ class S {
       args: [],
     );
   }
+
+  String get error_locale_dublicate {
+    return Intl.message(
+      'dublicate locale',
+      name: 'error_locale_dublicate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String error_locale_notsupport(Object locale, Object path) {
+    return Intl.message(
+      'Locale $locale from file $path doesnt supported. Use name of file like \'intl_ko_KR.arb\' or \'ko-KR.json\' where \'ko\' - target locale',
+      name: 'error_locale_notsupport',
+      desc: '',
+      args: [locale, path],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -150,6 +168,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'ko', countryCode: 'KR'),
       Locale.fromSubtags(languageCode: 'ru', countryCode: 'RU'),
     ];
   }

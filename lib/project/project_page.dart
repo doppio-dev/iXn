@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:file_access/file_access.dart' as file_access;
 
 class ProjectPage extends StatefulWidget {
   static const String routeName = '/project';
@@ -22,6 +21,12 @@ class _ProjectPageState extends State<ProjectPage> {
   void initState() {
     super.initState();
     projectScreen = ProjectScreen(projectBloc: _projectBloc);
+  }
+
+  @override
+  Future<void> dispose() async {
+    await _projectBloc.close();
+    super.dispose();
   }
 
   @override
@@ -93,12 +98,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future _import() async {
     try {
-      final newFiles = (await file_access.open(false, false, allowedTypes: ['zip']));
-      final newFile = newFiles.firstOrDefault;
-      print(newFile?.path);
-      // var text = await newFile.readAsString();
-      // var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
-      // print(json);
+      final filesData = await TranslateService().importFiles();
+      projectScreen.import(filesData);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
       ErrorServiceService.snackBar(_?.toString());

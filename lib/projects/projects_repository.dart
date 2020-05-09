@@ -1,11 +1,12 @@
-import 'package:doppio_dev_ixn/projects/index.dart';
+import 'package:doppio_dev_ixn/project/index.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ProjectsRepository {
-  final ProjectsProvider _projectsProvider = ProjectsProvider();
-
-  ProjectsRepository();
-
-  void test(bool isError) {
-    _projectsProvider.test(isError);
+  static final ProjectsRepository _projectsRepositorySingleton = ProjectsRepository._internal();
+  factory ProjectsRepository() {
+    return _projectsRepositorySingleton;
   }
+  ProjectsRepository._internal();
+
+  final projectSubject = PublishSubject<ProjectModel>();
 }

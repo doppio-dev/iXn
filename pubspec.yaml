@@ -24,7 +24,12 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: 4.0.0
-  equatable: 1.1.1
+
+  # for mutable state
+  equatable: #1.1.1
+    git:
+      url: https://github.com/Gorniv/equatable
+      ref: master
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,6 +51,9 @@ dependencies:
       ref: master
       path: hive_flutter
   uuid: 2.0.4
+  rxdart: 0.24.0
+# dependency_overrides:
+#   path: 1.7.0
 
 dev_dependencies:
   flutter_test:

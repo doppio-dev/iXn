@@ -9,7 +9,6 @@ import 'package:meta/meta.dart';
 @immutable
 abstract class ProjectSettingEvent {
   Stream<ProjectSettingState> applyAsync({ProjectSettingState currentState, ProjectSettingBloc bloc});
-  final ProjectSettingRepository _projectSettingRepository = ProjectSettingRepository();
 }
 
 class UnProjectSettingEvent extends ProjectSettingEvent {
@@ -58,8 +57,7 @@ class SaveProjectSettingEvent extends ProjectSettingEvent {
           return;
         }
         await projectsCacheManager.putAsync(projectModel.id, projectModel.toMap());
-
-        ProjectsBloc().add(LoadProjectsEvent());
+        ProjectsRepository().projectSubject.add(projectModel);
         yield currentState.copyWith(project: projectModel, version: currentState.version + 1);
       }
     } catch (_, stackTrace) {
