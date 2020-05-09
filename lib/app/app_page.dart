@@ -58,6 +58,7 @@ class _AppPageState extends State<AppPage> with WidgetsBindingObserver {
           // fontFamily: 'OpenSans'
         );
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
           key: const Key('MaterialApp'),
           localizationsDelegates: <LocalizationsDelegate<dynamic>>[

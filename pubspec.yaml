@@ -3,7 +3,7 @@ description: iXn
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -33,7 +33,7 @@ dependencies:
   url_launcher_macos: 0.0.1+5
   url_launcher_web: 0.1.1+2
   semaphore: 0.1.4
-  
+
   hive: #1.4.1+1
     git:
       url: https://github.com/Gorniv/hive
@@ -41,12 +41,12 @@ dependencies:
       path: hive
 
   hive_flutter: #0.3.0+1
-    git: 
+    git:
       url: https://github.com/Gorniv/hive
       ref: master
       path: hive_flutter
   uuid: 2.0.4
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,23 +59,23 @@ dev_dependencies:
       url: https://github.com/doppio-dev/utils
       ref: v0.0.4
       path: config
- 
+
   hive_generator: #0.7.0
-    git: 
+    git:
       url: https://github.com/Gorniv/hive
       ref: master
       path: hive_generator
-  
-  
-  dropdownfield: 1.0.3 # change?
+
   translator: #0.1.4
-    git: 
+    git:
       url: https://github.com/Gorniv/google-translator
+  file_access:
+    git: https://github.com/Gorniv/file_access
+    
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

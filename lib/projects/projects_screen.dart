@@ -6,17 +6,15 @@ import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
-import 'package:uuid/uuid.dart';
 import 'package:pedantic/pedantic.dart';
 
 class ProjectsScreen extends StatefulWidget {
   const ProjectsScreen({
     Key key,
-    @required ProjectsBloc projectsBloc,
-  })  : _projectsBloc = projectsBloc,
-        super(key: key);
+    @required this.projectsBloc,
+  }) : super(key: key);
 
-  final ProjectsBloc _projectsBloc;
+  final ProjectsBloc projectsBloc;
 
   @override
   ProjectsScreenState createState() {
@@ -41,7 +39,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProjectsBloc, ProjectsState>(
-        bloc: widget._projectsBloc,
+        bloc: widget.projectsBloc,
         builder: (
           BuildContext context,
           ProjectsState currentState,
@@ -74,12 +72,6 @@ class ProjectsScreenState extends State<ProjectsScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
                 children: [
-                  RaisedButton(
-                    onPressed: () {
-                      widget._projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
-                    },
-                    child: Text('add'),
-                  ),
                   ...currentState.projects.map(card).toList(),
                 ],
               ),
@@ -128,6 +120,6 @@ class ProjectsScreenState extends State<ProjectsScreen> {
   }
 
   void _load() {
-    widget._projectsBloc.add(LoadProjectsEvent());
+    widget.projectsBloc.add(LoadProjectsEvent());
   }
 }
