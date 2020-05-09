@@ -5,6 +5,5 @@
     "project_name" : "Name",
     "project_key" : "Key",
     "project_default_locale" : "Default Locale",
-    "project_your_locale" : "Your Locale",
     "error_reload" : "Reload"
 }

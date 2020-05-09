@@ -1,11 +1,10 @@
-import 'package:doppio_dev_ixn/core/logger.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:doppio_dev_ixn/widget/lang_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:dropdownfield/dropdownfield.dart';
 
 class ProjectSettingScreen extends StatefulWidget {
   const ProjectSettingScreen({
@@ -20,15 +19,27 @@ class ProjectSettingScreen extends StatefulWidget {
   ProjectSettingScreenState createState() {
     return ProjectSettingScreenState();
   }
+
+  Function get save => ProjectSettingScreenState.save;
 }
 
 class ProjectSettingScreenState extends State<ProjectSettingScreen> {
+  static Function save;
+
   ProjectModel projectModel;
+  bool autoValidate;
 
   ProjectSettingScreenState();
+  final i10n = TranslateService().locale;
+  List<String> locales;
+  Map<String, String> localesList;
 
   @override
   void initState() {
+    autoValidate = false;
+    locales = kMaterialSupportedLanguages.toList();
+    locales.sort();
+    localesList = {for (var code in locales) code: '$code - ${TranslateService.localesCountry[code]}'};
     super.initState();
   }
 
@@ -72,6 +83,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
             ));
           }
           if (currentState is InProjectSettingState) {
+            save = _save;
             projectModel ??= currentState.project.copyWith();
             return _settings(currentState);
           }
@@ -82,117 +94,97 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   }
 
   Widget _settings(InProjectSettingState currentState) {
-    final i10n = TranslateService().locale;
-    final locales = kMaterialSupportedLanguages.toList();
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          height: ContextService().deviceSize.height - 104,
-          width: ContextService().deviceSize.width,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: i10n.project_name),
-                  initialValue: projectModel.name,
-                  onChanged: (value) {
-                    setState(() {
-                      projectModel = projectModel.copyWith(name: value);
-                    });
-                  },
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Form(
+        autovalidate: autoValidate,
+        key: Key('settongs_form'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(labelText: i10n.project_name),
+              initialValue: projectModel.name,
+              onChanged: (value) {
+                setState(() {
+                  projectModel = projectModel.copyWith(name: value);
+                });
+              },
+            ),
+            LangDropdownWidget(
+              options: locales,
+              labelText: i10n.project_default_locale,
+              selectedValue: projectModel.defaultLocale,
+              select: (newValue) {
+                setState(() {
+                  projectModel = projectModel.copyWith(defaultLocale: newValue?.toString(), locales: projectModel.locales..add(newValue.toString()));
+                });
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 4),
+              child: Text(
+                i10n.projects_card_locales,
+                style: ContextService().textTheme.caption,
               ),
-              // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
-              // https://api.flutter.dev/flutter/flutter_localizations/kMaterialSupportedLanguages.html
-              // var countryLocale = Locale.fromSubtags(countryCode: value);
-              // print(GlobalMaterialLocalizations.delegate.isSupported(countryLocale));
-              DropDownField(
-                value: projectModel.defaultLocale,
-                required: true,
-                strict: true,
-                labelText: i10n.project_default_locale,
-                textStyle: ContextService().textTheme.bodyText1,
-                items: locales,
-                onValueChanged: (newValue) {
-                  print(newValue);
-                  setState(
-                    () {
-                      projectModel =
-                          projectModel.copyWith(defaultLocale: newValue?.toString(), locales: projectModel.locales..add(newValue.toString()));
-                    },
-                  );
-                },
-              ),
-
-              DropDownField(
-                value: projectModel.yourLocale,
-                required: false,
-                strict: true,
-                labelText: i10n.project_your_locale,
-                textStyle: ContextService().textTheme.bodyText1,
-                items: locales,
-                onValueChanged: (newValue) {
-                  print(newValue);
-                  setState(
-                    () {
-                      projectModel = projectModel.copyWith(yourLocale: newValue?.toString(), locales: projectModel.locales..add(newValue.toString()));
-                    },
-                  );
-                },
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    final code = locales[index];
-                    return Row(
-                      children: [
-                        Checkbox(
-                          onChanged: projectModel.defaultLocale == code
-                              ? null
-                              : (bool value) {
-                                  setState(() {
-                                    print(value);
-                                    var newLocales = projectModel.locales;
-                                    if (value == true) {
-                                      newLocales = projectModel.locales..add(code);
-                                    }
-                                    if (value == false) {
-                                      newLocales = projectModel.locales..remove(code);
-                                    }
-                                    projectModel = projectModel.copyWith(locales: newLocales);
-                                  });
-                                },
-                          value: projectModel.defaultLocale == code || projectModel.locales.contains(code),
-                        ),
-                        Expanded(
-                          child: Text(
-                            '$code - ${TranslateService.localesCountry[code]}',
-                            overflow: TextOverflow.clip,
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                  itemCount: kMaterialSupportedLanguages.length,
-                ),
-              )
-            ],
-          ),
+            ),
+            _buildTargetLocales(),
+          ],
         ),
-        RaisedButton(
-          onPressed: currentState.project == projectModel
-              ? null
-              : () {
-                  widget._projectSettingBloc.add(SaveProjectSettingEvent(projectModel));
-                },
-          child: Text('save'),
-        )
-      ],
+      ),
     );
+  }
+
+  Widget _buildTargetLocales() {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: ContextService().theme.dividerColor),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            final code = locales[index];
+            return Row(
+              children: [
+                Checkbox(
+                  onChanged: projectModel.defaultLocale == code
+                      ? null
+                      : (bool value) {
+                          setState(() {
+                            print(value);
+                            var newLocales = projectModel.locales;
+                            if (value == true) {
+                              newLocales = projectModel.locales..add(code);
+                            }
+                            if (value == false) {
+                              newLocales = projectModel.locales..remove(code);
+                            }
+                            projectModel = projectModel.copyWith(locales: newLocales);
+                          });
+                        },
+                  value: projectModel.defaultLocale == code || projectModel.locales.contains(code),
+                ),
+                Expanded(
+                  child: Text(
+                    '$code - ${TranslateService.localesCountry[code]}',
+                    overflow: TextOverflow.clip,
+                  ),
+                )
+              ],
+            );
+          },
+          itemCount: kMaterialSupportedLanguages.length,
+        ),
+      ),
+    );
+  }
+
+  void _save() {
+    if (!autoValidate) {
+      autoValidate = true;
+    }
+    widget._projectSettingBloc.add(SaveProjectSettingEvent(projectModel));
   }
 
   void _load(BuildContext context) {
