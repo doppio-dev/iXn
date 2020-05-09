@@ -21,9 +21,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
-        "error_reload": MessageLookupByLibrary.simpleMessage("Перегрузить"),
-        "projects_card_locale": MessageLookupByLibrary.simpleMessage("Локаль"),
-        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Локалей"),
-        "projects_card_name": MessageLookupByLibrary.simpleMessage("Имя")
+        "discard": MessageLookupByLibrary.simpleMessage("Отклонить"),
+        "error_reload": MessageLookupByLibrary.simpleMessage("Переезагрузить"),
+        "error_unsaved": MessageLookupByLibrary.simpleMessage("Форма содержит неесохраненные данные, сохрать данные?"),
+        "page_settings": MessageLookupByLibrary.simpleMessage("Настройки проекта"),
+        "project_default_locale": MessageLookupByLibrary.simpleMessage("Локализация по умолчанию"),
+        "project_key": MessageLookupByLibrary.simpleMessage("Ключ"),
+        "project_name": MessageLookupByLibrary.simpleMessage("Название проекта"),
+        "projects_card_locale": MessageLookupByLibrary.simpleMessage("Локализация"),
+        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Локализаций"),
+        "projects_card_name": MessageLookupByLibrary.simpleMessage("Название"),
+        "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
+        "save_data": MessageLookupByLibrary.simpleMessage("Сохранить изменения")
       };
 }

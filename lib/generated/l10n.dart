@@ -46,7 +46,7 @@ class S {
 
   String get projects_card_locales {
     return Intl.message(
-      'Locales',
+      'Supported Locales',
       name: 'projects_card_locales',
       desc: '',
       args: [],
@@ -55,7 +55,7 @@ class S {
 
   String get project_name {
     return Intl.message(
-      'Name',
+      'Project Name',
       name: 'project_name',
       desc: '',
       args: [],
@@ -84,6 +84,60 @@ class S {
     return Intl.message(
       'Reload',
       name: 'error_reload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get close {
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get save_data {
+    return Intl.message(
+      'Save changes',
+      name: 'save_data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get discard {
+    return Intl.message(
+      'Discard',
+      name: 'discard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get error_unsaved {
+    return Intl.message(
+      'The form contains some unsaved changes.\r\nDo you want to save all entered data?',
+      name: 'error_unsaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get page_settings {
+    return Intl.message(
+      'Project Settings',
+      name: 'page_settings',
       desc: '',
       args: [],
     );

@@ -1,3 +1,4 @@
+import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 
@@ -10,6 +11,8 @@ class ProjectSettingPage extends StatefulWidget {
 
 class _ProjectSettingPageState extends State<ProjectSettingPage> {
   final _projectSettingBloc = ProjectSettingBloc();
+  final i10n = TranslateService().locale;
+
   ProjectSettingScreen screen;
   @override
   void initState() {
@@ -19,12 +22,23 @@ class _ProjectSettingPageState extends State<ProjectSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ProjectSetting'),
-        actions: [IconButton(icon: const Icon(Icons.save), onPressed: () => screen.save())],
+    return Container(
+      child: WillPopScope(
+        onWillPop: () => screen.willPop(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(i10n.page_settings),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () => screen.save(),
+                tooltip: i10n.save,
+              )
+            ],
+          ),
+          body: screen,
+        ),
       ),
-      body: screen,
     );
   }
 }

@@ -21,12 +21,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
+        "close": MessageLookupByLibrary.simpleMessage("Close"),
+        "discard": MessageLookupByLibrary.simpleMessage("Discard"),
         "error_reload": MessageLookupByLibrary.simpleMessage("Reload"),
+        "error_unsaved": MessageLookupByLibrary.simpleMessage("The form contains some unsaved changes.\r\nDo you want to save all entered data?"),
+        "page_settings": MessageLookupByLibrary.simpleMessage("Project Settings"),
         "project_default_locale": MessageLookupByLibrary.simpleMessage("Default Locale"),
         "project_key": MessageLookupByLibrary.simpleMessage("Key"),
-        "project_name": MessageLookupByLibrary.simpleMessage("Name"),
+        "project_name": MessageLookupByLibrary.simpleMessage("Project Name"),
         "projects_card_locale": MessageLookupByLibrary.simpleMessage("Locale"),
-        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Locales"),
-        "projects_card_name": MessageLookupByLibrary.simpleMessage("Name")
+        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Supported Locales"),
+        "projects_card_name": MessageLookupByLibrary.simpleMessage("Name"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "save_data": MessageLookupByLibrary.simpleMessage("Save changes")
       };
 }
