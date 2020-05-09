@@ -80,6 +80,15 @@ class S {
     );
   }
 
+  String get project_your_locale {
+    return Intl.message(
+      'Your Locale',
+      name: 'project_your_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get error_reload {
     return Intl.message(
       'Reload',

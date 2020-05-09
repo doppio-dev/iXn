@@ -8,6 +8,7 @@ class ProjectModel extends Equatable {
   final String name;
   final List<String> locales;
   final String defaultLocale;
+  final String yourLocale;
   final List<KeyModel> keys;
   final List<WordModel> words;
   Map<String, WordModel> wordMap;
@@ -18,6 +19,7 @@ class ProjectModel extends Equatable {
     this.keys,
     this.locales,
     this.defaultLocale,
+    this.yourLocale,
     this.words,
   }) {
     wordMap = {};
@@ -34,6 +36,7 @@ class ProjectModel extends Equatable {
         name,
         keys,
         locales,
+        yourLocale,
         defaultLocale,
         words,
       ];
@@ -44,6 +47,7 @@ class ProjectModel extends Equatable {
       'name': name,
       'keys': keys,
       'locales': locales,
+      'yourLocale': yourLocale,
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
@@ -56,6 +60,7 @@ class ProjectModel extends Equatable {
       id: map['id']?.toString(),
       name: map['name']?.toString(),
       locales: List<String>.from(map['locales'] as Iterable<dynamic> ?? []),
+      yourLocale: map['yourLocale']?.toString(),
       defaultLocale: map['defaultLocale']?.toString(),
       keys: List<KeyModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => KeyModel.fromMap(c as Map<dynamic, dynamic>))),
       words: List<WordModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => WordModel.fromMap(c as Map<dynamic, dynamic>))),
@@ -70,6 +75,7 @@ class ProjectModel extends Equatable {
     String id,
     String name,
     List<String> locales,
+    String yourLocale,
     String defaultLocale,
     List<KeyModel> keys,
     List<WordModel> words,
@@ -78,6 +84,7 @@ class ProjectModel extends Equatable {
       id: id ?? this.id,
       name: name ?? this.name,
       locales: locales != null ? [...locales] : [...this.locales ?? []],
+      yourLocale: yourLocale ?? this.yourLocale,
       defaultLocale: defaultLocale ?? this.defaultLocale,
       keys: keys ?? this.keys,
       words: words ?? this.words,

@@ -1,9 +1,11 @@
+import 'package:doppio_dev_ixn/generated/l10n.dart';
 import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:uuid/uuid.dart';
+import 'package:translator/translator.dart';
 
 class ProjectScreen extends StatefulWidget {
   ProjectScreen({
@@ -22,6 +24,9 @@ class ProjectScreen extends StatefulWidget {
 
 class ProjectScreenState extends State<ProjectScreen> {
   ProjectModel projectModel;
+  ScrollController scrollController = ScrollController();
+
+  final translator = GoogleTranslator();
 
   ProjectScreenState();
   bool changeSettings;
@@ -70,7 +75,10 @@ class ProjectScreenState extends State<ProjectScreen> {
           }
           if (currentState is InProjectState) {
             projectModel ??= currentState.project.copyWith();
-            return mainEditor(currentState);
+            return SingleChildScrollView(
+              child: mainEditor(currentState),
+              controller: scrollController,
+            );
           }
           return Center(
             child: CircularProgressIndicator(),
@@ -88,121 +96,162 @@ class ProjectScreenState extends State<ProjectScreen> {
     final height = size.height - 56;
     return Row(
       children: [
-        Container(
-          height: height,
-          color: Colors.grey,
-          child: Column(
-            children: [
-              Text('tree'),
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    var newKeys = projectModel.keys ?? [];
-                    newKeys.add(KeyModel(id: Uuid().v4()));
-                    projectModel = projectModel.copyWith(keys: newKeys);
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
+        _tree(height),
         divider(),
-        Container(
-          height: height,
-          color: Colors.grey.withOpacity(0.1),
-          child: Container(
-            height: size.height,
-            width: 100,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(i10n.project_key),
-                Expanded(
-                  child: ListView.builder(
-                    itemBuilder: (context, index) {
-                      var key = projectModel.keys[index];
-                      return TextFormField(
-                        initialValue: key.value ?? '',
-                        onChanged: (value) {
-                          setState(() {
-                            key = key.copyWith(value: value.toString());
-                          });
-                        },
-                      );
-                    },
-                    itemCount: projectModel.keys?.length ?? 0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        _key(height, i10n),
         divider(),
-        Container(
-          height: height,
-          color: Colors.grey.withOpacity(0.2),
-          child: Container(
-            height: size.height,
-            width: 100,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(i10n.project_default_locale),
-                Expanded(
-                  child: ListView.builder(
-                    itemBuilder: (context, index) {
-                      final key = projectModel.keys[index];
-                      final locale = projectModel.defaultLocale;
-                      final newkey = '$key$locale';
-                      var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
-                      return TextFormField(
-                        initialValue: word.value ?? '',
-                        onChanged: (value) {
-                          setState(() {
-                            word = word.copyWith(value: value);
-                          });
-                        },
-                      );
-                    },
-                    itemCount: projectModel.keys?.length ?? 0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        _lang(height, projectModel.defaultLocale, i10n.project_default_locale),
         divider(),
-        Container(
-          height: height,
-          color: Colors.grey.withOpacity(0.2),
-          child: Column(
-            children: [
-              Text('your lang'),
-            ],
-          ),
-        ),
-        divider(),
-        Container(
-          height: height,
-          color: Colors.grey.withOpacity(0.3),
-          child: Column(
-            children: [
-              Text('Auto'),
-            ],
-          ),
-        ),
-        divider(),
-        Container(
-          height: height,
-          color: Colors.grey.withOpacity(0.4),
-          child: Column(
-            children: [
-              Text('Lang'),
-            ],
-          ),
-        ),
+        if (projectModel.yourLocale != null) ..._editLocale(height, i10n.project_your_locale, projectModel.yourLocale),
+        ..._editLocale(height, projectModel.locales[1], projectModel.locales[1]),
       ],
+    );
+  }
+
+  List<Widget> _editLocale(double height, String title, String locale) {
+    return [
+      _lang(height, locale, title),
+      divider(),
+      _langAuto(height, locale, 'Auto to $locale'),
+      divider(),
+    ];
+  }
+
+  Container _tree(double height) {
+    return Container(
+      height: height,
+      color: Colors.grey,
+      child: Column(
+        children: [
+          Text('tree'),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              setState(() {
+                var newKeys = projectModel.keys ?? [];
+                newKeys.add(KeyModel(id: Uuid().v4()));
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _translate(String text, String toLocale) {
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.none && snapshot.hasData == null) {
+          return Container();
+        }
+        return TextFormField(
+          controller: TextEditingController(text: snapshot.data?.toString() ?? ''),
+          enabled: false,
+        );
+      },
+      future: text == null || text == '' ? Future.value('') : translator.translate(text, to: toLocale),
+    );
+  }
+
+  Container _key(double height, S i10n) {
+    var size = ContextService().deviceSize;
+    return Container(
+      height: height,
+      color: Colors.grey.withOpacity(0.1),
+      child: Container(
+        height: size.height,
+        width: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(i10n.project_key),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  var key = projectModel.keys[index];
+                  return TextFormField(
+                    initialValue: key.value ?? '',
+                    onChanged: (value) {
+                      setState(() {
+                        key = key.copyWith(value: value.toString());
+                      });
+                    },
+                  );
+                },
+                itemCount: projectModel.keys?.length ?? 0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _lang(double height, String locale, String title) {
+    var size = ContextService().deviceSize;
+    return Container(
+      height: height,
+      color: Colors.grey.withOpacity(0.2),
+      child: Container(
+        height: size.height,
+        width: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(title),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  final key = projectModel.keys[index];
+                  final newkey = '${key.id}$locale';
+                  var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
+                  return TextFormField(
+                    initialValue: word.value ?? '',
+                    onChanged: (value) {
+                      setState(() {
+                        word = word.copyWith(value: value);
+                        projectModel.wordMap[newkey] = word;
+                      });
+                    },
+                  );
+                },
+                itemCount: projectModel.keys?.length ?? 0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _langAuto(double height, String locale, String title) {
+    var size = ContextService().deviceSize;
+    return Container(
+      height: height,
+      color: Colors.grey.withOpacity(0.2),
+      child: Container(
+        height: size.height,
+        width: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(title),
+            Expanded(
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  final key = projectModel.keys[index];
+                  final newkey = '${key.id}${projectModel.defaultLocale}';
+                  var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: projectModel.defaultLocale);
+                  return _translate(word.value, locale);
+                },
+                itemCount: projectModel.keys?.length ?? 0,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

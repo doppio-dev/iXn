@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "project_default_locale": MessageLookupByLibrary.simpleMessage("Default Locale"),
         "project_key": MessageLookupByLibrary.simpleMessage("Key"),
         "project_name": MessageLookupByLibrary.simpleMessage("Name"),
+        "project_your_locale": MessageLookupByLibrary.simpleMessage("Your Locale"),
         "projects_card_locale": MessageLookupByLibrary.simpleMessage("Locale"),
         "projects_card_locales": MessageLookupByLibrary.simpleMessage("Locales"),
         "projects_card_name": MessageLookupByLibrary.simpleMessage("Name")

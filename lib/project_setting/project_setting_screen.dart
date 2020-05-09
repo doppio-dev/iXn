@@ -127,6 +127,23 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
                   );
                 },
               ),
+
+              DropDownField(
+                value: projectModel.yourLocale,
+                required: false,
+                strict: true,
+                labelText: i10n.project_your_locale,
+                textStyle: ContextService().textTheme.bodyText1,
+                items: locales,
+                onValueChanged: (newValue) {
+                  print(newValue);
+                  setState(
+                    () {
+                      projectModel = projectModel.copyWith(yourLocale: newValue?.toString(), locales: projectModel.locales..add(newValue.toString()));
+                    },
+                  );
+                },
+              ),
               Expanded(
                 child: ListView.builder(
                   itemBuilder: (context, index) {
