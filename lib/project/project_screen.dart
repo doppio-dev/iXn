@@ -94,33 +94,78 @@ class ProjectScreenState extends State<ProjectScreen> {
     var size = ContextService().deviceSize;
     final i10n = TranslateService().locale;
     final height = size.height - 56;
-    return Row(
-      children: [
-        _tree(height),
-        divider(),
-        _key(height, i10n),
-        divider(),
-        _lang(height, projectModel.defaultLocale, i10n.project_default_locale),
-        divider(),
-        if (projectModel.locales?.length > 1) ..._editLocale(height, projectModel.locales[1], projectModel.locales[1]),
-      ],
+    return Container(
+      height: height,
+      color: Colors.grey.withOpacity(0.2),
+      child: Container(
+        height: size.height,
+        width: size.width,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _width(_tree(), 100),
+                divider(),
+                _width(Text(i10n.project_key), 100),
+                divider(),
+                _width(Text(i10n.project_default_locale), 100),
+                divider(),
+                if (projectModel?.locales != null && projectModel.locales.length > 1)
+                  Row(
+                    children: [
+                      _width(Text(projectModel.locales[1]), 100),
+                      _width(Text('auto ${projectModel.locales[1]}'), 100),
+                    ],
+                  ),
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  var key = projectModel.keys[index];
+                  return Row(
+                    children: [
+                      _width(_tree(index: index), 100),
+                      divider(),
+                      _width(_key(i10n, index), 100),
+                      divider(),
+                      _width(_lang(projectModel.defaultLocale, i10n.project_default_locale, index), 100),
+                      divider(),
+                      if (projectModel?.locales != null && projectModel.locales.length > 1)
+                        ..._editLocale(100, projectModel.locales[1], projectModel.locales[1], index),
+                    ],
+                  );
+                },
+                itemCount: projectModel.keys?.length ?? 0,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
-  List<Widget> _editLocale(double height, String title, String locale) {
+  List<Widget> _editLocale(double width, String title, String locale, int index) {
     return [
-      _lang(height, locale, title),
+      _width(_lang(locale, title, index), width),
       divider(),
-      _langAuto(height, locale, 'Auto to $locale'),
+      _width(_langAuto(locale, index), width),
       divider(),
     ];
   }
 
-  Container _tree(double height) {
-    return Container(
-      height: height,
-      color: Colors.grey,
-      child: Column(
+  Widget _width(Widget child, double width) {
+    return Container(width: width, child: child);
+  }
+
+  Widget _tree({int index}) {
+    if (index == null) {
+      return Column(
         children: [
           Text('tree'),
           IconButton(
@@ -131,10 +176,11 @@ class ProjectScreenState extends State<ProjectScreen> {
                 newKeys.add(KeyModel(id: Uuid().v4()));
               });
             },
-          ),
+          )
         ],
-      ),
-    );
+      );
+    }
+    return Text('test');
   }
 
   Widget _translate(String text, String toLocale) {
@@ -152,106 +198,38 @@ class ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
-  Container _key(double height, S i10n) {
-    var size = ContextService().deviceSize;
-    return Container(
-      height: height,
-      color: Colors.grey.withOpacity(0.1),
-      child: Container(
-        height: size.height,
-        width: 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Text(i10n.project_key),
-            Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  var key = projectModel.keys[index];
-                  return TextFormField(
-                    initialValue: key.value ?? '',
-                    onChanged: (value) {
-                      setState(() {
-                        key = key.copyWith(value: value.toString());
-                      });
-                    },
-                  );
-                },
-                itemCount: projectModel.keys?.length ?? 0,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _key(S i10n, int index) {
+    var key = projectModel.keys[index];
+    return TextFormField(
+      initialValue: key.value ?? '',
+      onChanged: (value) {
+        setState(() {
+          key = key.copyWith(value: value.toString());
+        });
+      },
     );
   }
 
-  Container _lang(double height, String locale, String title) {
-    var size = ContextService().deviceSize;
-    return Container(
-      height: height,
-      color: Colors.grey.withOpacity(0.2),
-      child: Container(
-        height: size.height,
-        width: 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Text(title),
-            Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                itemBuilder: (context, index) {
-                  final key = projectModel.keys[index];
-                  final newkey = '${key.id}$locale';
-                  var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
-                  return TextFormField(
-                    initialValue: word.value ?? '',
-                    onChanged: (value) {
-                      setState(() {
-                        word = word.copyWith(value: value);
-                        projectModel.wordMap[newkey] = word;
-                      });
-                    },
-                  );
-                },
-                itemCount: projectModel.keys?.length ?? 0,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _lang(String locale, String title, int index) {
+    final key = projectModel.keys[index];
+    final newkey = '${key.id}$locale';
+    var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
+    return TextFormField(
+      initialValue: word.value ?? '',
+      onChanged: (value) {
+        setState(() {
+          word = word.copyWith(value: value);
+          projectModel.wordMap[newkey] = word;
+        });
+      },
     );
   }
 
-  Container _langAuto(double height, String locale, String title) {
-    var size = ContextService().deviceSize;
-    return Container(
-      height: height,
-      color: Colors.grey.withOpacity(0.2),
-      child: Container(
-        height: size.height,
-        width: 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Text(title),
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  final key = projectModel.keys[index];
-                  final newkey = '${key.id}${projectModel.defaultLocale}';
-                  var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: projectModel.defaultLocale);
-                  return _translate(word.value, locale);
-                },
-                itemCount: projectModel.keys?.length ?? 0,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _langAuto(String locale, int index) {
+    final key = projectModel.keys[index];
+    final newkey = '${key.id}${projectModel.defaultLocale}';
+    var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: projectModel.defaultLocale);
+    return _translate(word.value, locale);
   }
 
   Future<void> _load([bool isError = false]) async {
