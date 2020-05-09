@@ -1,9 +1,15 @@
 {
     "projects_card_name" : "Name",
     "projects_card_locale" : "Locale",
-    "projects_card_locales" : "Locales",
-    "project_name" : "Name",
+    "projects_card_locales" : "Supported Locales",
+    "project_name" : "Project Name",
     "project_key" : "Key",
     "project_default_locale" : "Default Locale",
-    "error_reload" : "Reload"
+    "error_reload" : "Reload",
+    "save": "Save",
+    "close": "Close",
+    "save_data": "Save changes",
+    "discard": "Discard",
+    "error_unsaved": "The form contains some unsaved changes.\r\nDo you want to save all entered data?",
+    "page_settings": "Project Settings"
 }

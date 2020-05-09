@@ -1,3 +1,4 @@
+import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:doppio_dev_ixn/widget/lang_dropdown.dart';
@@ -21,13 +22,19 @@ class ProjectSettingScreen extends StatefulWidget {
   }
 
   Function get save => ProjectSettingScreenState.save;
+  Future<bool> Function() get willPop => ProjectSettingScreenState.willPop;
 }
 
 class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   static Function save;
+  static Future<bool> Function() willPop;
 
   ProjectModel projectModel;
+  ProjectModel projectModelBackup;
   bool autoValidate;
+  bool backuped;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>(debugLabel: 'settongs_form');
 
   ProjectSettingScreenState();
   final i10n = TranslateService().locale;
@@ -37,9 +44,11 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   @override
   void initState() {
     autoValidate = false;
+    backuped = false;
     locales = kMaterialSupportedLanguages.toList();
     locales.sort();
     localesList = {for (var code in locales) code: '$code - ${TranslateService.localesCountry[code]}'};
+    willPop = _willPop;
     super.initState();
   }
 
@@ -85,6 +94,10 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
           if (currentState is InProjectSettingState) {
             save = _save;
             projectModel ??= currentState.project.copyWith();
+            if (!backuped) {
+              projectModelBackup = projectModel == null ? null : projectModel.copyWith();
+              backuped = true;
+            }
             return _settings(currentState);
           }
           return Center(
@@ -98,7 +111,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
       padding: const EdgeInsets.all(12.0),
       child: Form(
         autovalidate: autoValidate,
-        key: Key('settongs_form'),
+        key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,7 +197,10 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
     if (!autoValidate) {
       autoValidate = true;
     }
-    widget._projectSettingBloc.add(SaveProjectSettingEvent(projectModel));
+    if (formKey.currentState.validate()) {
+      projectModelBackup = projectModel == null ? null : projectModel.copyWith();
+      widget._projectSettingBloc.add(SaveProjectSettingEvent(projectModel));
+    }
   }
 
   void _load(BuildContext context) {
@@ -194,5 +210,40 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
     }
     final id = args['id'] as String;
     widget._projectSettingBloc.add(LoadProjectSettingEvent(id));
+  }
+
+  Future<bool> _willPop() async {
+    var canPop = projectModelBackup == projectModel;
+    if (!canPop) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) => AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(i10n.save_data),
+              GestureDetector(child: Icon(Icons.close), onTap: () => navigatorKey.currentState.pop()),
+            ],
+          ),
+          content: Text(i10n.error_unsaved),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  _save();
+                  navigatorKey.currentState.pop();
+                  canPop = true;
+                },
+                child: Text(i10n.save)),
+            FlatButton(
+                onPressed: () {
+                  navigatorKey.currentState.pop();
+                  canPop = true;
+                },
+                child: Text(i10n.discard)),
+          ],
+        ),
+      );
+    }
+    return Future.value(canPop);
   }
 }
