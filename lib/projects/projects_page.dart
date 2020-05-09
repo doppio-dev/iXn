@@ -28,40 +28,42 @@ class _ProjectsPageState extends State<ProjectsPage> {
         ),
         body: projectsScreen,
         persistentFooterButtons: <Widget>[
-          IconButton(
-            onPressed: () async {
-              projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
-            },
-            tooltip: 'Add',
-            icon: Icon(Icons.add),
-          ),
-          IconButton(
-            onPressed: () async {
-              try {
-                final newFiles = (await file_access.open(false, false, allowedTypes: ['zip']));
-                final newFile = newFiles.firstOrDefault;
-                print(newFile?.path);
-                // var text = await newFile.readAsString();
-                // var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
-                // print(json);
-              } catch (_, stackTrace) {
-                final snackBar = SnackBar(
-                  content: Text(_?.toString()),
-                  duration: Duration(seconds: 3),
-                  action: SnackBarAction(
-                    label: 'Close',
-                    onPressed: () {},
-                  ),
-                );
-                log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-                Scaffold.of(ContextService().buildContext).showSnackBar(snackBar);
-              }
-
-              // projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
-            },
-            tooltip: 'Import',
-            icon: Icon(Icons.file_upload),
+          Container(
+            width: ContextService().deviceSize.width,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
+                  },
+                  tooltip: 'Add',
+                  icon: Icon(Icons.add),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () async {
+                    await _import();
+                  },
+                  tooltip: 'Import',
+                  icon: Icon(Icons.file_upload),
+                ),
+              ],
+            ),
           ),
         ]);
+  }
+
+  Future _import() async {
+    try {
+      final newFiles = (await file_access.open(false, false, allowedTypes: ['zip']));
+      final newFile = newFiles.firstOrDefault;
+      print(newFile?.path);
+      // var text = await newFile.readAsString();
+      // var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
+      // print(json);
+    } catch (_, stackTrace) {
+      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
+      ErrorServiceService.snackBar(_?.toString());
+    }
   }
 }

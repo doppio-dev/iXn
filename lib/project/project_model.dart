@@ -42,7 +42,7 @@ class ProjectModel extends Equatable {
     return {
       'id': id,
       'name': name,
-      'keys': keys,
+      'keys': keys?.map((x) => x?.toMap())?.toList(),
       'locales': locales,
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
@@ -57,7 +57,7 @@ class ProjectModel extends Equatable {
       name: map['name']?.toString(),
       locales: List<String>.from(map['locales'] as Iterable<dynamic> ?? []),
       defaultLocale: map['defaultLocale']?.toString(),
-      keys: List<KeyModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => KeyModel.fromMap(c as Map<dynamic, dynamic>))),
+      keys: List<KeyModel>.from((map['keys'] as List<dynamic> ?? [])?.map((c) => KeyModel.fromMap(c as Map<dynamic, dynamic>))),
       words: List<WordModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => WordModel.fromMap(c as Map<dynamic, dynamic>))),
     );
   }

@@ -20,6 +20,9 @@ class ProjectScreen extends StatefulWidget {
   ProjectScreenState createState() {
     return ProjectScreenState();
   }
+
+  Function() get addKey => ProjectScreenState.addKey;
+  Function() get save => ProjectScreenState.save;
 }
 
 class ProjectScreenState extends State<ProjectScreen> {
@@ -27,6 +30,9 @@ class ProjectScreenState extends State<ProjectScreen> {
   ScrollController scrollController = ScrollController();
 
   final translator = GoogleTranslator();
+
+  static void Function() addKey;
+  static void Function() save;
 
   ProjectScreenState();
   bool changeSettings;
@@ -75,6 +81,10 @@ class ProjectScreenState extends State<ProjectScreen> {
           }
           if (currentState is InProjectState) {
             projectModel ??= currentState.project.copyWith();
+            addKey = _addKey;
+            save = () {
+              widget._projectBloc.add(SaveProjectEvent(projectModel));
+            };
             return SingleChildScrollView(
               child: mainEditor(currentState),
               controller: scrollController,
@@ -168,19 +178,17 @@ class ProjectScreenState extends State<ProjectScreen> {
       return Column(
         children: [
           Text('tree'),
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              setState(() {
-                var newKeys = projectModel.keys ?? [];
-                newKeys.add(KeyModel(id: Uuid().v4()));
-              });
-            },
-          )
         ],
       );
     }
     return Text('test');
+  }
+
+  void _addKey() {
+    setState(() {
+      var newKeys = projectModel.keys ?? [];
+      newKeys.add(KeyModel(id: Uuid().v4()));
+    });
   }
 
   Widget _translate(String text, String toLocale) {

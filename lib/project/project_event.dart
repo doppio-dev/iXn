@@ -40,3 +40,31 @@ class LoadProjectEvent extends ProjectEvent {
     }
   }
 }
+
+class SaveProjectEvent extends ProjectEvent {
+  final projectsCacheManager = ProjectsCacheManager();
+  final ProjectModel projectModel;
+
+  @override
+  String toString() => runtimeType.toString();
+
+  SaveProjectEvent(this.projectModel);
+
+  @override
+  Stream<ProjectState> applyAsync({ProjectState currentState, ProjectBloc bloc}) async* {
+    try {
+      if (currentState is InProjectState) {
+        if (!projectsCacheManager.containsKey(projectModel?.id, useExpire: false)) {
+          return;
+        }
+        await projectsCacheManager.putAsync(projectModel.id, projectModel.toMap());
+
+        ProjectsBloc().add(LoadProjectsEvent());
+        yield currentState.copyWith(project: projectModel, version: currentState.version + 1);
+      }
+    } catch (_, stackTrace) {
+      developer.log('$_', name: 'LoadProjectEvent', error: _, stackTrace: stackTrace);
+      yield ErrorProjectState(0, _?.toString());
+    }
+  }
+}
