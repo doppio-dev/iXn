@@ -44,7 +44,7 @@ class ProjectModel extends Equatable {
       'id': id,
       'name': name,
       'keys': keys?.map((x) => x?.toMap())?.toList(),
-      'locales': locales.toSet().toList(),
+      'locales': locales?.toSet()?.toList(),
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
