@@ -102,8 +102,7 @@ class ProjectScreenState extends State<ProjectScreen> {
         divider(),
         _lang(height, projectModel.defaultLocale, i10n.project_default_locale),
         divider(),
-        if (projectModel.yourLocale != null) ..._editLocale(height, i10n.project_your_locale, projectModel.yourLocale),
-        ..._editLocale(height, projectModel.locales[1], projectModel.locales[1]),
+        if (projectModel.locales?.length > 1) ..._editLocale(height, projectModel.locales[1], projectModel.locales[1]),
       ],
     );
   }
