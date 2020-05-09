@@ -19,6 +19,25 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static m0(locale, path) =>
+      "Locale ${locale} from file ${path} doesnt supported. Use name of file like \'intl_ko_KR.arb\' or \'ko-KR.json\' where \'ko\' - target locale";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static _notInlinedMessages(_) => <String, Function>{"error_reload": MessageLookupByLibrary.simpleMessage("Reload")};
+  static _notInlinedMessages(_) => <String, Function>{
+        "close": MessageLookupByLibrary.simpleMessage("Close"),
+        "discard": MessageLookupByLibrary.simpleMessage("Discard"),
+        "error_locale_dublicate": MessageLookupByLibrary.simpleMessage("dublicate locale"),
+        "error_locale_notsupport": m0,
+        "error_reload": MessageLookupByLibrary.simpleMessage("Reload"),
+        "error_unsaved": MessageLookupByLibrary.simpleMessage("The form contains some unsaved changes.\r\nDo you want to save all entered data?"),
+        "page_settings": MessageLookupByLibrary.simpleMessage("Project Settings"),
+        "project_default_locale": MessageLookupByLibrary.simpleMessage("Default Locale"),
+        "project_key": MessageLookupByLibrary.simpleMessage("Key"),
+        "project_name": MessageLookupByLibrary.simpleMessage("Project Name"),
+        "projects_card_locale": MessageLookupByLibrary.simpleMessage("Locale"),
+        "projects_card_locales": MessageLookupByLibrary.simpleMessage("Supported Locales"),
+        "projects_card_name": MessageLookupByLibrary.simpleMessage("Name"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "save_data": MessageLookupByLibrary.simpleMessage("Save changes")
+      };
 }

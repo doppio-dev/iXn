@@ -8,6 +8,8 @@ class ContextService {
 
   TextTheme textTheme;
   ThemeData theme;
+
+  BuildContext buildContext;
   factory ContextService() {
     return _contextServiceSingleton;
   }
@@ -23,6 +25,7 @@ class ContextService {
     // if (theme == null) {
     theme = Theme.of(context);
     textTheme = theme.textTheme;
+    buildContext = context;
     // }
   }
 

@@ -26,12 +26,138 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  String get projects_card_name {
+    return Intl.message(
+      'Name',
+      name: 'projects_card_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_card_locale {
+    return Intl.message(
+      'Locale',
+      name: 'projects_card_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_card_locales {
+    return Intl.message(
+      'Supported Locales',
+      name: 'projects_card_locales',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_name {
+    return Intl.message(
+      'Project Name',
+      name: 'project_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_key {
+    return Intl.message(
+      'Key',
+      name: 'project_key',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_default_locale {
+    return Intl.message(
+      'Default Locale',
+      name: 'project_default_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get error_reload {
     return Intl.message(
       'Reload',
       name: 'error_reload',
       desc: '',
       args: [],
+    );
+  }
+
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get close {
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get save_data {
+    return Intl.message(
+      'Save changes',
+      name: 'save_data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get discard {
+    return Intl.message(
+      'Discard',
+      name: 'discard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get error_unsaved {
+    return Intl.message(
+      'The form contains some unsaved changes.\r\nDo you want to save all entered data?',
+      name: 'error_unsaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get page_settings {
+    return Intl.message(
+      'Project Settings',
+      name: 'page_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get error_locale_dublicate {
+    return Intl.message(
+      'dublicate locale',
+      name: 'error_locale_dublicate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String error_locale_notsupport(Object locale, Object path) {
+    return Intl.message(
+      'Locale $locale from file $path doesnt supported. Use name of file like \'intl_ko_KR.arb\' or \'ko-KR.json\' where \'ko\' - target locale',
+      name: 'error_locale_notsupport',
+      desc: '',
+      args: [locale, path],
     );
   }
 }
@@ -42,6 +168,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'ko', countryCode: 'KR'),
       Locale.fromSubtags(languageCode: 'ru', countryCode: 'RU'),
     ];
   }
