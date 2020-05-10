@@ -63,7 +63,6 @@ class ProjectScreenState extends State<ProjectScreen> {
           BuildContext context,
           ProjectState currentState,
         ) {
-          print('BlocBulder');
           ContextService().buidlContext(context);
           if (currentState is UnProjectState) {
             _load();
@@ -132,7 +131,6 @@ class ProjectScreenState extends State<ProjectScreen> {
     final count = 11;
     final countD = 5;
     final widthD = 10;
-    final widthSm = (size.width - countD * widthD) / count;
     final widthXl = (size.width - countD * widthD) / count * 3;
 
     final i10n = TranslateService().locale;
@@ -146,51 +144,82 @@ class ProjectScreenState extends State<ProjectScreen> {
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
-              _width(_tree(), widthSm),
+              Flexible(
+                child: _tree(),
+                flex: 1,
+                fit: FlexFit.tight,
+              ),
               divider(),
-              _width(Text(i10n.project_key), widthSm),
+              Flexible(
+                child: Text(i10n.project_key),
+                flex: 1,
+                fit: FlexFit.tight,
+              ),
               divider(),
-              _width(Text(i10n.project_default_locale), widthXl),
+              Flexible(
+                child: Text(i10n.project_default_locale),
+                flex: 3,
+                fit: FlexFit.tight,
+              ),
               divider(),
-              if (projectModel?.locales != null && projectModel.locales.length > 1)
-                Row(
-                  children: [
-                    _width(
-                        LangDropdownWidget(
-                          options: projectModel.locales,
-                          labelText: i10n.project_default_locale,
-                          selectedValue: selectedLocale,
-                          width: widthXl - 24,
-                          select: (newValue) {
-                            setState(() {
-                              selectedLocale = newValue?.toString();
-                            });
-                          },
-                        ),
-                        widthXl),
-                    divider(),
-                    _width(Text('auto $selectedLocale'), widthXl),
-                    divider(),
-                  ],
+              if (projectModel?.locales != null && projectModel.locales.length > 1) ...[
+                Flexible(
+                  child: Container(
+                    width: 100,
+                    child: LangDropdownWidget(
+                      options: projectModel.locales,
+                      labelText: i10n.project_default_locale,
+                      selectedValue: selectedLocale,
+                      // TODO: remove, how?!
+                      width: widthXl - 24,
+                      select: (newValue) {
+                        setState(() {
+                          selectedLocale = newValue?.toString();
+                        });
+                      },
+                    ),
+                  ),
+                  flex: 3,
+                  fit: FlexFit.tight,
                 ),
+                divider(),
+                Flexible(
+                  child: Text('auto $selectedLocale'),
+                  flex: 3,
+                  fit: FlexFit.tight,
+                ),
+                divider(),
+              ],
             ],
           ),
           Expanded(
             child: ListView.builder(
               controller: scrollController,
               itemBuilder: (context, index) {
-                // var key = projectModel.keys[index];
                 return Row(
                   children: [
-                    _width(_tree(index: index), widthSm),
+                    Flexible(
+                      child: _tree(index: index),
+                      flex: 1,
+                      fit: FlexFit.tight,
+                    ),
                     divider(),
-                    _width(_key(i10n, index), widthSm),
+                    Flexible(
+                      child: _key(i10n, index),
+                      flex: 1,
+                      fit: FlexFit.tight,
+                    ),
                     divider(),
-                    _width(_lang(projectModel.defaultLocale, i10n.project_default_locale, index), widthXl),
+                    Flexible(
+                      child: _lang(projectModel.defaultLocale, i10n.project_default_locale, index),
+                      flex: 3,
+                      fit: FlexFit.tight,
+                    ),
                     divider(),
                     if (projectModel?.locales != null && projectModel.locales.isNotEmpty)
-                      ..._editLocale(widthXl, selectedLocale, selectedLocale, index),
+                      ..._editLocale(selectedLocale, selectedLocale, index, widthXl),
                   ],
                 );
               },
@@ -202,11 +231,19 @@ class ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
-  List<Widget> _editLocale(double width, String title, String locale, int index) {
+  List<Widget> _editLocale(String title, String locale, int index, double width) {
     return [
-      _width(_lang(locale, title, index), width),
+      Flexible(
+        child: _lang(locale, title, index),
+        flex: 3,
+        fit: FlexFit.tight,
+      ),
       divider(),
-      _width(_langAuto(locale, index), width),
+      Flexible(
+        child: _langAuto(locale, index, width),
+        flex: 3,
+        fit: FlexFit.tight,
+      ),
       divider(),
     ];
   }
@@ -233,25 +270,6 @@ class ProjectScreenState extends State<ProjectScreen> {
     });
   }
 
-  Widget _translate(String text, String toLocale) {
-    return FutureBuilder(
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none && snapshot.hasData == null) {
-          return Container();
-        }
-        if (snapshot.error != null) {
-          return Text(snapshot.error.toString());
-        }
-        return TextFormField(
-          controller: TextEditingController(text: snapshot.data?.toString() ?? ''),
-          maxLines: null,
-          enabled: false,
-        );
-      },
-      future: text == null || text == '' ? Future.value('') : translator.translate(text, to: toLocale),
-    );
-  }
-
   Widget _key(S i10n, int index) {
     var key = projectModel.keys[index];
     return TextFormField(
@@ -267,25 +285,31 @@ class ProjectScreenState extends State<ProjectScreen> {
   Widget _lang(String locale, String title, int index) {
     final key = projectModel.keys[index];
     final newkey = '${key.id}$locale';
+    final keyOrigin = '${key.id}${projectModel.defaultLocale}';
     var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
-    return TextFormField(
-      key: Key(newkey),
-      initialValue: word?.value ?? '',
-      maxLines: null,
-      onChanged: (value) {
-        setState(() {
-          word = word.copyWith(value: value);
-          projectModel.wordMap[newkey] = word;
-        });
-      },
+    var wordOrigin = projectModel.wordMap[keyOrigin] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
+    return Container(
+      color: word.origin != wordOrigin.value && locale != projectModel.defaultLocale ? Colors.pink.withOpacity(0.2) : Colors.transparent,
+      child: TextFormField(
+        key: Key(newkey),
+        initialValue: word?.value ?? '',
+        maxLines: null,
+        onChanged: (value) {
+          setState(() {
+            word = word.copyWith(value: value, origin: wordOrigin.value);
+            projectModel.wordMap[newkey] = word;
+          });
+        },
+      ),
     );
   }
 
-  Widget _langAuto(String locale, int index) {
+  Widget _langAuto(String locale, int index, double width) {
     final key = projectModel.keys[index];
     final newkey = '${key.id}$locale';
     var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: projectModel.defaultLocale);
-    return _translate(word.value, locale);
+    // TODO: remove width
+    return TranslateWord(translator: translator, text: word.value, toLocale: locale, key: Key('${newkey}_auto'), width: width);
   }
 
   Future<void> _load([bool isError = false]) async {

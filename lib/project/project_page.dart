@@ -24,8 +24,8 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   @override
-  Future<void> dispose() async {
-    await _projectBloc.close();
+  void dispose() {
+    _projectBloc.close();
     super.dispose();
   }
 
@@ -102,7 +102,7 @@ class _ProjectPageState extends State<ProjectPage> {
       projectScreen.import(filesData);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      ErrorServiceService.snackBar(_?.toString());
+      ErrorService.snackBar(_?.toString());
     }
   }
 }

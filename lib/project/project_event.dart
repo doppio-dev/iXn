@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:doppio_dev_ixn/project/index.dart';
+import 'package:doppio_dev_ixn/core/index.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -56,6 +57,21 @@ class SaveProjectEvent extends ProjectEvent {
       if (currentState is InProjectState) {
         if (!projectsCacheManager.containsKey(projectModel?.id, useExpire: false)) {
           return;
+        }
+        var emptyKeys = projectModel.keys.where((el) => el.value.isNullOrEmpty()).toList();
+        for (var key in emptyKeys) {
+          final words = projectModel.words.where((el) => el.keyId == key.id);
+          var needRemove = true;
+          for (var word in words) {
+            if (word.value.isNullOrEmpty()) {
+              projectModel.words.remove(word);
+              continue;
+            }
+            needRemove = false;
+          }
+          if (needRemove == true) {
+            projectModel.keys.remove(key);
+          }
         }
         await projectsCacheManager.putAsync(projectModel.id, projectModel.toMap());
 

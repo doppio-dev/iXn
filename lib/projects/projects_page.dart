@@ -61,7 +61,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       // print(json);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      ErrorServiceService.snackBar(_?.toString());
+      ErrorService.snackBar(_?.toString());
     }
   }
 }
