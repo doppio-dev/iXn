@@ -37,7 +37,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   void initState() {
     locales = kMaterialSupportedLanguages.toList();
     locales.sort();
-    localesList = {for (var code in locales) code: '$code - ${TranslateService.localesCountry[code]}'};
+    localesList = {for (var code in locales) code: '$code - ${TranslateService.localeCountryName[code]}'};
     super.initState();
   }
 
@@ -171,7 +171,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    '$code - ${TranslateService.localesCountry[code]}',
+                    '$code - ${TranslateService.localeCountryName[code]}',
                     overflow: TextOverflow.clip,
                   ),
                 )

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:archive/archive_io.dart';
 import 'package:doppio_dev_ixn/core/index.dart';
 import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
@@ -7,6 +10,7 @@ import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:uuid/uuid.dart';
+import 'package:file_manager/file_manager.dart' as manager;
 
 class ProjectPage extends StatefulWidget {
   static const String routeName = '/project';
@@ -94,7 +98,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   Spacer(),
                   IconButton(
                     onPressed: () async {
-                      await _export();
+                      await _export(projectModel);
                     },
                     tooltip: 'Export',
                     icon: Icon(Icons.file_upload),
@@ -144,8 +148,23 @@ class _ProjectPageState extends State<ProjectPage> {
     });
   }
 
-  Future _export() async {
+  Future _export(ProjectModel projectModel) async {
     try {
+      var encoder = ZipEncoder();
+      final archive = Archive();
+      for (var locale in projectModel.locales) {
+        final mapWord = <String, String>{};
+        final result = <String, String>{};
+        projectModel.words.where((c) => c.locale == locale).map((e) => mapWord[e.keyId] = e.value).toList();
+        for (var item in projectModel.keys) {
+          result['"${item.value}"'] = '"${mapWord[item.id]}"';
+        }
+        final bytes = Utf8Codec().encode(result.toString());
+        final archiveFile = ArchiveFile('$locale.json', bytes.length, bytes);
+        archive.addFile(archiveFile);
+      }
+      final bytesZip = encoder.encode(archive);
+      await manager.saveFile('${projectModel.name}-ixn.zip', binaryData: bytesZip);
       // projectScreen.import(filesData);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
