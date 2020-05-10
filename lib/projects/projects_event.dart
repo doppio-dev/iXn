@@ -57,3 +57,39 @@ class AddProjectsEvent extends ProjectsEvent {
     }
   }
 }
+
+class RemoveProjectsEvent extends ProjectsEvent {
+  final projectsCacheManager = ProjectsCacheManager();
+  final ProjectModel projectModel;
+  RemoveProjectsEvent({@required this.projectModel});
+  @override
+  Stream<ProjectsState> applyAsync({ProjectsState currentState, ProjectsBloc bloc}) async* {
+    try {
+      if (currentState is InProjectsState) {
+        await projectsCacheManager.deleteAsync(projectModel.id);
+        final newProjects = [...currentState.projects]..remove(projectModel);
+        yield currentState.copyWith(projects: newProjects);
+      }
+    } catch (_, stackTrace) {
+      developer.log('$_', name: 'LoadProjectsEvent', error: _, stackTrace: stackTrace);
+      yield ErrorProjectsState(_?.toString());
+    }
+  }
+}
+
+class ViewProjectsEvent extends ProjectsEvent {
+  final projectsCacheManager = ProjectsCacheManager();
+  final bool showRemove;
+  ViewProjectsEvent({@required this.showRemove});
+  @override
+  Stream<ProjectsState> applyAsync({ProjectsState currentState, ProjectsBloc bloc}) async* {
+    try {
+      if (currentState is InProjectsState) {
+        yield currentState.copyWith(showRemove: showRemove);
+      }
+    } catch (_, stackTrace) {
+      developer.log('$_', name: 'LoadProjectsEvent', error: _, stackTrace: stackTrace);
+      yield ErrorProjectsState(_?.toString());
+    }
+  }
+}

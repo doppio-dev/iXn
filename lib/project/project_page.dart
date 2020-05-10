@@ -74,6 +74,13 @@ class _ProjectPageState extends State<ProjectPage> {
                   Spacer(),
                   IconButton(
                     onPressed: () async {
+                      await _export();
+                    },
+                    tooltip: 'Export',
+                    icon: Icon(Icons.file_download),
+                  ),
+                  IconButton(
+                    onPressed: () async {
                       await _import();
                     },
                     tooltip: 'Import',
@@ -102,7 +109,16 @@ class _ProjectPageState extends State<ProjectPage> {
       projectScreen.import(filesData);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      ErrorService.snackBar(_?.toString());
+      NotificationService.showError(_?.toString());
+    }
+  }
+
+  Future _export() async {
+    try {
+      // projectScreen.import(filesData);
+    } catch (_, stackTrace) {
+      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
+      NotificationService.showError(_?.toString());
     }
   }
 }

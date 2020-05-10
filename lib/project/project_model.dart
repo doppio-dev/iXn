@@ -10,7 +10,7 @@ class ProjectModel extends Equatable {
   final List<String> locales;
   String defaultLocale;
   final List<KeyModel> keys;
-  final List<WordModel> words;
+  List<WordModel> words;
   Map<String, WordModel> wordMap;
 
   ProjectModel({
@@ -44,7 +44,7 @@ class ProjectModel extends Equatable {
       'id': id,
       'name': name,
       'keys': keys?.map((x) => x?.toMap())?.toList(),
-      'locales': locales.toSet().toList(),
+      'locales': locales?.toSet()?.toList(),
       'defaultLocale': defaultLocale,
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
@@ -122,11 +122,22 @@ class ProjectModel extends Equatable {
       }
     }
   }
+
+  WordModel getWord(String newkey, KeyModel key, String locale) {
+    if (wordMap.containsKey(newkey)) {
+      return wordMap[newkey];
+    }
+    final newWord = WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
+    words ??= [];
+    words.add(newWord);
+    wordMap[newkey] = newWord;
+    return newWord;
+  }
 }
 
 class KeyModel extends Equatable {
   final String id;
-  final String value;
+  String value;
 
   KeyModel({
     this.id,

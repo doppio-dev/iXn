@@ -72,7 +72,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
                 children: [
-                  ...currentState.projects.map(card).toList(),
+                  ...currentState.projects.map((p) => card(p, currentState)).toList(),
                 ],
               ),
             );
@@ -83,7 +83,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
         });
   }
 
-  Widget card(ProjectModel e) {
+  Widget card(ProjectModel e, InProjectsState currentState) {
     final i10n = TranslateService().locale;
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -107,10 +107,22 @@ class ProjectsScreenState extends State<ProjectsScreen> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${i10n.projects_card_name}: ${e.name}'),
                 Text('${i10n.projects_card_locale}: ${e.defaultLocale}'),
                 Text('${i10n.projects_card_locales}: ${e.locales}'),
+                if (currentState.showRemove == true)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(
+                      color: Colors.red,
+                      child: Text('Remove'),
+                      onPressed: () {
+                        widget.projectsBloc.add(RemoveProjectsEvent(projectModel: e));
+                      },
+                    ),
+                  ),
               ],
             ),
           ),

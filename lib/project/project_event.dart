@@ -60,7 +60,7 @@ class SaveProjectEvent extends ProjectEvent {
         }
         var emptyKeys = projectModel.keys.where((el) => el.value.isNullOrEmpty()).toList();
         for (var key in emptyKeys) {
-          final words = projectModel.words.where((el) => el.keyId == key.id);
+          final words = projectModel.words.where((el) => el.keyId == key.id).toList();
           var needRemove = true;
           for (var word in words) {
             if (word.value.isNullOrEmpty()) {

@@ -21,18 +21,17 @@ class UnProjectsState extends ProjectsState {
 /// Initialized
 class InProjectsState extends ProjectsState {
   final List<ProjectModel> projects;
-
-  InProjectsState({this.projects}) : super([projects]);
+  final bool showRemove;
+  InProjectsState({this.projects, this.showRemove = false}) : super([projects, showRemove]);
 
   @override
   String toString() => 'InProjectsState $projects';
 
   InProjectsState copyWith({
     List<ProjectModel> projects,
+    bool showRemove,
   }) {
-    return InProjectsState(
-      projects: projects ?? [...this.projects],
-    );
+    return InProjectsState(projects: projects ?? [...this.projects], showRemove: showRemove ?? this.showRemove);
   }
 }
 

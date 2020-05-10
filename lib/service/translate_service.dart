@@ -106,7 +106,7 @@ class TranslateService {
     final filesData = <String, Map<String, String>>{};
     for (var item in newFiles) {
       var name = path.basename(item.path);
-      var locale = name.replaceAll('intl_', '').replaceAll('_', '-').split('-')[0];
+      var locale = name.replaceAll('intl_', '').replaceAll('_', '-').replaceAll('.', '-').split('-')[0];
       var text = await item.readAsString();
       var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
       if (filesData.containsKey(locale)) {
