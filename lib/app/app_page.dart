@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
@@ -55,9 +56,12 @@ class _AppPageState extends State<AppPage> with WidgetsBindingObserver {
           primaryColor: brightness == Brightness.dark ? Colors.black : Colors.white,
           accentColor: brightness == Brightness.dark ? Colors.white : Colors.black,
           brightness: brightness == Brightness.dark ? Brightness.dark : Brightness.light,
+          textSelectionColor: Colors.blue,
           // fontFamily: 'OpenSans'
         );
         return MaterialApp(
+          builder: BotToastInit(),
+          navigatorObservers: [BotToastNavigatorObserver()],
           debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
           key: const Key('MaterialApp'),

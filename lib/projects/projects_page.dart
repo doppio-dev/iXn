@@ -16,6 +16,7 @@ class ProjectsPage extends StatefulWidget {
 
 class _ProjectsPageState extends State<ProjectsPage> {
   final projectsScreen = ProjectsScreen(projectsBloc: ProjectsBloc());
+  var showRemove = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +38,21 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   tooltip: 'Add',
                   icon: Icon(Icons.add),
                 ),
+                IconButton(
+                  onPressed: () async {
+                    showRemove = !showRemove;
+                    projectsScreen.projectsBloc.add(ViewProjectsEvent(showRemove: showRemove));
+                  },
+                  tooltip: 'Show remove button',
+                  icon: Icon(Icons.remove),
+                ),
                 Spacer(),
                 IconButton(
                   onPressed: () async {
                     await _import();
                   },
                   tooltip: 'Import',
-                  icon: Icon(Icons.file_upload),
+                  icon: Icon(Icons.file_download),
                 ),
               ],
             ),
@@ -61,7 +70,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       // print(json);
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      ErrorServiceService.snackBar(_?.toString());
+      NotificationService.showError(_?.toString());
     }
   }
 }

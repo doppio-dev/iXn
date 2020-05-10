@@ -51,6 +51,7 @@ class _LangDropdownWidgetState extends State<LangDropdownWidget> {
                       '$_code - ${TranslateService.localesCountry[_code]}',
                       overflow: TextOverflow.clip,
                       maxLines: 1,
+                      softWrap: true,
                     ),
                   ),
                 );

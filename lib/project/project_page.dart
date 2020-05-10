@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:uuid/uuid.dart';
 
 class ProjectPage extends StatefulWidget {
   static const String routeName = '/project';
@@ -16,16 +17,18 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   final _projectBloc = ProjectBloc();
+  ProjectModel projectModel;
+  int currentVersionState;
+
   ProjectScreen projectScreen;
   @override
   void initState() {
     super.initState();
-    projectScreen = ProjectScreen(projectBloc: _projectBloc);
   }
 
   @override
-  Future<void> dispose() async {
-    await _projectBloc.close();
+  void dispose() {
+    _projectBloc.close();
     super.dispose();
   }
 
@@ -38,6 +41,23 @@ class _ProjectPageState extends State<ProjectPage> {
         ProjectState currentState,
       ) {
         ContextService().buidlContext(context);
+        if (currentState is InProjectState) {
+          if (projectModel == null) {
+            projectModel = currentState.project.copyWith();
+            currentVersionState = currentState.version;
+          }
+          // change setting
+          if (currentVersionState != currentState.version) {
+            currentVersionState = currentState.version;
+            final pr = currentState.project;
+            projectModel = projectModel.copySettings(
+              defaultLocale: pr.defaultLocale,
+              locales: pr.locales,
+              name: pr.name,
+            );
+          }
+        }
+        projectScreen = ProjectScreen(projectBloc: _projectBloc, projectModel: projectModel);
         return Scaffold(
           appBar: AppBar(
             title: Text('Project'),
@@ -66,7 +86,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 children: [
                   IconButton(
                     onPressed: () async {
-                      projectScreen.addKey();
+                      _addKey();
                     },
                     tooltip: 'Add',
                     icon: Icon(Icons.add),
@@ -74,14 +94,21 @@ class _ProjectPageState extends State<ProjectPage> {
                   Spacer(),
                   IconButton(
                     onPressed: () async {
-                      await _import();
+                      await _export();
                     },
-                    tooltip: 'Import',
+                    tooltip: 'Export',
                     icon: Icon(Icons.file_upload),
                   ),
                   IconButton(
                     onPressed: () async {
-                      projectScreen.save();
+                      await _import();
+                    },
+                    tooltip: 'Import',
+                    icon: Icon(Icons.file_download),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      _projectBloc.add(SaveProjectEvent(projectModel));
                     },
                     tooltip: 'Save',
                     icon: Icon(Icons.save),
@@ -99,10 +126,30 @@ class _ProjectPageState extends State<ProjectPage> {
   Future _import() async {
     try {
       final filesData = await TranslateService().importFiles();
-      projectScreen.import(filesData);
+      for (var locale in filesData.keys) {
+        setState(() {
+          projectModel.import(locale, filesData[locale]);
+        });
+      }
     } catch (_, stackTrace) {
       log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      ErrorServiceService.snackBar(_?.toString());
+      NotificationService.showError(_?.toString());
+    }
+  }
+
+  void _addKey() {
+    setState(() {
+      var newKeys = projectModel.keys ?? [];
+      newKeys.add(KeyModel(id: Uuid().v4()));
+    });
+  }
+
+  Future _export() async {
+    try {
+      // projectScreen.import(filesData);
+    } catch (_, stackTrace) {
+      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
+      NotificationService.showError(_?.toString());
     }
   }
 }

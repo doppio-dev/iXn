@@ -6,11 +6,11 @@ import 'package:uuid/uuid.dart';
 
 class ProjectModel extends Equatable {
   final String id;
-  final String name;
-  final List<String> locales;
+  String name;
+  List<String> locales;
   String defaultLocale;
   final List<KeyModel> keys;
-  final List<WordModel> words;
+  List<WordModel> words;
   Map<String, WordModel> wordMap;
 
   ProjectModel({
@@ -122,11 +122,22 @@ class ProjectModel extends Equatable {
       }
     }
   }
+
+  WordModel getWord(String newkey, KeyModel key, String locale) {
+    if (wordMap.containsKey(newkey)) {
+      return wordMap[newkey];
+    }
+    final newWord = WordModel(id: Uuid().v4(), keyId: key.id, locale: locale);
+    words ??= [];
+    words.add(newWord);
+    wordMap[newkey] = newWord;
+    return newWord;
+  }
 }
 
 class KeyModel extends Equatable {
   final String id;
-  final String value;
+  String value;
 
   KeyModel({
     this.id,
@@ -177,8 +188,14 @@ class WordModel extends Equatable {
   final String keyId;
   final String locale;
   String value;
+
+  /// for compare when differen values current and import. (must be null)
+  String valueNewVersion;
+
+  /// value from default for compare
+  String origin;
+
   final bool approved;
-  final bool auto;
 
   //use like this and dont translate
   final bool staticTranslate;
@@ -194,8 +211,9 @@ class WordModel extends Equatable {
     this.keyId,
     this.locale,
     this.value,
+    this.origin,
+    this.valueNewVersion,
     this.approved,
-    this.auto,
     this.staticTranslate,
     this.images,
     this.notes,
@@ -209,8 +227,9 @@ class WordModel extends Equatable {
         keyId,
         locale,
         value,
+        origin,
+        valueNewVersion,
         approved,
-        auto,
         staticTranslate,
         images,
         notes,
@@ -224,8 +243,9 @@ class WordModel extends Equatable {
       'key': keyId,
       'locale': locale,
       'value': value,
+      'origin': origin,
+      'valueNewVersion': valueNewVersion,
       'approved': approved,
-      'auto': auto,
       'staticTranslate': staticTranslate,
       'images': images?.map((x) => x?.toMap())?.toList(),
       'notes': notes,
@@ -242,8 +262,9 @@ class WordModel extends Equatable {
       keyId: map['key']?.toString(),
       locale: map['locale']?.toString(),
       value: map['value']?.toString(),
+      origin: map['origin']?.toString(),
+      valueNewVersion: map['valueNewVersion']?.toString(),
       approved: map['approved'] as bool,
-      auto: map['auto'] as bool,
       staticTranslate: map['staticTranslate'] as bool,
       images: List<ImageModel>.from(((map['images'] as List<dynamic> ?? []).cast<Map<dynamic, dynamic>>() ?? [])?.map(ImageModel.fromMap)),
       notes: map['notes']?.toString(),
@@ -261,8 +282,9 @@ class WordModel extends Equatable {
     String keyId,
     String locale,
     String value,
+    String origin,
+    String valueNewVersion,
     bool approved,
-    bool auto,
     bool staticTranslate,
     List<ImageModel> images,
     String notes,
@@ -274,8 +296,9 @@ class WordModel extends Equatable {
       keyId: keyId ?? this.keyId,
       locale: locale ?? this.locale,
       value: value ?? this.value,
+      origin: origin ?? this.origin,
+      valueNewVersion: valueNewVersion ?? this.valueNewVersion,
       approved: approved ?? this.approved,
-      auto: auto ?? this.auto,
       staticTranslate: staticTranslate ?? this.staticTranslate,
       images: images ?? this.images,
       notes: notes ?? this.notes,
