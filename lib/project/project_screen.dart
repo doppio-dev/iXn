@@ -12,31 +12,22 @@ class ProjectScreen extends StatefulWidget {
   ProjectScreen({
     Key key,
     @required ProjectBloc projectBloc,
+    this.projectModel,
   })  : _projectBloc = projectBloc,
         super(key: key);
 
   final ProjectBloc _projectBloc;
-
+  final ProjectModel projectModel;
   @override
   ProjectScreenState createState() {
     return ProjectScreenState();
   }
-
-  Function() get addKey => ProjectScreenState.addKey;
-  Function() get save => ProjectScreenState.save;
-
-  Function(Map<String, Map<String, String>> filesData) get import => ProjectScreenState.import;
 }
 
 class ProjectScreenState extends State<ProjectScreen> {
-  ProjectModel projectModel;
   ScrollController scrollController = ScrollController();
 
   final translator = GoogleTranslator();
-
-  static void Function() addKey;
-  static void Function() save;
-  static void Function(Map<String, Map<String, String>> filesData) import;
 
   String selectedLocale;
 
@@ -88,27 +79,15 @@ class ProjectScreenState extends State<ProjectScreen> {
             ));
           }
           if (currentState is InProjectState) {
-            if (projectModel == null) {
-              projectModel = currentState.project.copyWith();
+            if (currentVersionState == null) {
               currentVersionState = currentState.version;
-              selectedLocale = projectModel.defaultLocale;
-              addKey = _addKey;
-              save = () {
-                widget._projectBloc.add(SaveProjectEvent(projectModel));
-              };
-              import = _import;
+              selectedLocale = widget.projectModel.defaultLocale;
             }
             // change setting
             if (currentVersionState != currentState.version) {
               currentVersionState = currentState.version;
-              final pr = currentState.project;
-              projectModel = projectModel.copySettings(
-                defaultLocale: pr.defaultLocale,
-                locales: pr.locales,
-                name: pr.name,
-              );
-              if (!projectModel.locales.contains(selectedLocale)) {
-                selectedLocale = projectModel.defaultLocale;
+              if (!widget.projectModel.locales.contains(selectedLocale)) {
+                selectedLocale = widget.projectModel.defaultLocale;
               }
             }
             return SingleChildScrollView(
@@ -163,15 +142,15 @@ class ProjectScreenState extends State<ProjectScreen> {
               ),
               divider(),
               Flexible(
-                child: EditKey(projectModel: projectModel, index: index, render: renderUpdate),
+                child: EditKey(projectModel: widget.projectModel, index: index, render: renderUpdate),
                 flex: 1,
                 fit: FlexFit.tight,
               ),
               divider(),
               Flexible(
                 child: EditLangWord(
-                    projectModel: projectModel,
-                    locale: projectModel.defaultLocale,
+                    projectModel: widget.projectModel,
+                    locale: widget.projectModel.defaultLocale,
                     title: i10n.project_default_locale,
                     index: index,
                     render: renderUpdate),
@@ -179,11 +158,12 @@ class ProjectScreenState extends State<ProjectScreen> {
                 fit: FlexFit.tight,
               ),
               divider(),
-              if (projectModel?.locales != null && projectModel.locales.isNotEmpty) ..._editLocale(selectedLocale, selectedLocale, index, widthXl),
+              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty)
+                ..._editLocale(selectedLocale, selectedLocale, index, widthXl),
             ],
           );
         },
-        itemCount: projectModel.keys?.length ?? 0,
+        itemCount: widget.projectModel.keys?.length ?? 0,
       ),
     );
   }
@@ -215,12 +195,12 @@ class ProjectScreenState extends State<ProjectScreen> {
           fit: FlexFit.tight,
         ),
         divider(),
-        if (projectModel?.locales != null && projectModel.locales.isNotEmpty) ...[
+        if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty) ...[
           Flexible(
             child: Container(
               width: 100,
               child: LangDropdownWidget(
-                options: projectModel.locales,
+                options: widget.projectModel.locales,
                 labelText: i10n.project_default_locale,
                 selectedValue: selectedLocale,
                 // TODO: remove, how?!
@@ -251,7 +231,7 @@ class ProjectScreenState extends State<ProjectScreen> {
     return [
       Flexible(
         child: EditLangWord(
-          projectModel: projectModel,
+          projectModel: widget.projectModel,
           locale: locale,
           title: title,
           index: index,
@@ -281,17 +261,10 @@ class ProjectScreenState extends State<ProjectScreen> {
     return Container();
   }
 
-  void _addKey() {
-    setState(() {
-      var newKeys = projectModel.keys ?? [];
-      newKeys.add(KeyModel(id: Uuid().v4()));
-    });
-  }
-
   Widget _langAuto(String locale, int index, double width) {
-    final key = projectModel.keys[index];
+    final key = widget.projectModel.keys[index];
     final newkey = '${key.id}$locale';
-    var word = projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: projectModel.defaultLocale);
+    var word = widget.projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: widget.projectModel.defaultLocale);
     // TODO: remove width
     return TranslateWord(translator: translator, text: word.value, toLocale: locale, key: Key('${newkey}_auto'), width: width);
   }
@@ -303,13 +276,5 @@ class ProjectScreenState extends State<ProjectScreen> {
     }
     final id = args['id'] as String;
     widget._projectBloc.add(LoadProjectEvent(id));
-  }
-
-  void _import(Map<String, Map<String, String>> filesData) {
-    for (var locale in filesData.keys) {
-      setState(() {
-        projectModel.import(locale, filesData[locale]);
-      });
-    }
   }
 }

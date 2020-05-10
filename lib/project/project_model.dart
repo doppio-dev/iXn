@@ -6,8 +6,8 @@ import 'package:uuid/uuid.dart';
 
 class ProjectModel extends Equatable {
   final String id;
-  final String name;
-  final List<String> locales;
+  String name;
+  List<String> locales;
   String defaultLocale;
   final List<KeyModel> keys;
   List<WordModel> words;

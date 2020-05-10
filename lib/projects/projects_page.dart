@@ -52,7 +52,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                     await _import();
                   },
                   tooltip: 'Import',
-                  icon: Icon(Icons.file_upload),
+                  icon: Icon(Icons.file_download),
                 ),
               ],
             ),
