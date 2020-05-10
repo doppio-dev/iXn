@@ -54,6 +54,16 @@ dependencies:
   rxdart: 0.24.0
   bot_toast: 3.0.0
 
+  file_access:
+    git: https://github.com/Gorniv/file_access
+
+  file_manager:
+    git: 
+      url: https://github.com/rodydavis/file_manager
+      ref: master
+      path: file_manager
+  archive: 2.0.13
+
 # dependency_overrides:
 #   path: 1.7.0
 
@@ -79,8 +89,6 @@ dev_dependencies:
   translator: #0.1.4
     git:
       url: https://github.com/Gorniv/google-translator
-  file_access:
-    git: https://github.com/Gorniv/file_access
     
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

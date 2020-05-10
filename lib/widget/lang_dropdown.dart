@@ -48,7 +48,7 @@ class _LangDropdownWidgetState extends State<LangDropdownWidget> {
                   child: Container(
                     width: widget.width,
                     child: Text(
-                      '$_code - ${TranslateService.localesCountry[_code]}',
+                      '$_code - ${TranslateService.localeCountryName[_code]}',
                       overflow: TextOverflow.clip,
                       maxLines: 1,
                       softWrap: true,
