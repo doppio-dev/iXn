@@ -1,16 +1,116 @@
 import 'dart:convert';
 
+import 'package:archive/archive.dart';
 import 'package:equatable/equatable.dart';
+import 'package:file_manager/file_manager.dart' as manager;
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:doppio_dev_ixn/core/index.dart';
+import 'package:doppio_dev_ixn/service/index.dart';
+
+class LocaleModel extends Equatable {
+  final String countryName;
+  final String locale;
+  final String countryCode;
+  String get key => '$locale-$countryCode';
+  LocaleModel({
+    this.countryName,
+    this.locale,
+    this.countryCode,
+  });
+
+  @override
+  List<Object> get props => [
+        countryName,
+        locale,
+        countryCode,
+      ];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'countryName': countryName,
+      'locale': locale,
+      'countryCode': countryCode,
+    };
+  }
+
+  static LocaleModel fromMap(Map<dynamic, dynamic> map) {
+    if (map == null) return null;
+
+    return LocaleModel(
+      countryName: map['countryName']?.toString(),
+      locale: map['locale']?.toString(),
+      countryCode: map['countryCode']?.toString(),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static LocaleModel fromJson(String source) => fromMap(json.decode(source) as Map<dynamic, dynamic>);
+
+  static LocaleModel from(MapEntry<String, String> localeCode) {
+    final split = localeCode.value.split('-');
+    return LocaleModel(countryName: localeCode.key, locale: split[0], countryCode: split[1]);
+  }
+
+  @override
+  String toString() => '$countryName: $locale-$countryCode';
+}
+
+class ExportFormatModel extends Equatable {
+  String prefix;
+  String postfix;
+  String divider;
+  String fileExtension;
+  ExportFormatModel({
+    this.prefix,
+    this.postfix,
+    this.divider,
+    this.fileExtension,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'prefix': prefix,
+      'postfix': postfix,
+      'divider': divider,
+      'fileExtension': fileExtension,
+    };
+  }
+
+  static ExportFormatModel fromMap(Map<dynamic, dynamic> map) {
+    if (map == null) return null;
+
+    return ExportFormatModel(
+      prefix: map['prefix']?.toString(),
+      postfix: map['postfix']?.toString(),
+      divider: map['divider']?.toString(),
+      fileExtension: map['fileExtension']?.toString(),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static ExportFormatModel fromJson(String source) => fromMap(json.decode(source) as Map<dynamic, dynamic>);
+
+  @override
+  List<Object> get props => [
+        prefix,
+        postfix,
+        divider,
+        fileExtension,
+      ];
+}
 
 class ProjectModel extends Equatable {
   final String id;
   String name;
-  List<String> locales;
-  String defaultLocale;
+  List<LocaleModel> locales;
+  LocaleModel defaultLocale;
   final List<KeyModel> keys;
   List<WordModel> words;
+  List<ExportFormatModel> formats;
   Map<String, WordModel> wordMap;
 
   ProjectModel({
@@ -20,6 +120,7 @@ class ProjectModel extends Equatable {
     this.locales,
     this.defaultLocale,
     this.words,
+    this.formats,
   }) {
     wordMap = {};
     if (words != null) {
@@ -37,6 +138,7 @@ class ProjectModel extends Equatable {
         locales,
         defaultLocale,
         words,
+        formats,
       ];
 
   Map<String, dynamic> toMap() {
@@ -44,8 +146,9 @@ class ProjectModel extends Equatable {
       'id': id,
       'name': name,
       'keys': keys?.map((x) => x?.toMap())?.toList(),
-      'locales': locales?.toSet()?.toList(),
-      'defaultLocale': defaultLocale,
+      'formats': formats?.map((x) => x?.toMap())?.toList(),
+      'locales': locales?.map((x) => x?.toMap())?.toList(),
+      'defaultLocale': defaultLocale?.toMap(),
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
   }
@@ -56,8 +159,10 @@ class ProjectModel extends Equatable {
     return ProjectModel(
       id: map['id']?.toString(),
       name: map['name']?.toString(),
-      locales: List<String>.from(map['locales'] as Iterable<dynamic> ?? []),
-      defaultLocale: map['defaultLocale']?.toString(),
+      defaultLocale: LocaleModel.fromMap(map['defaultLocale'] as Map<dynamic, dynamic>),
+      locales: List<LocaleModel>.from((map['locales'] as List<dynamic> ?? [])?.map((c) => LocaleModel.fromMap(c as Map<dynamic, dynamic>))),
+      formats:
+          List<ExportFormatModel>.from((map['formats'] as List<dynamic> ?? [])?.map((c) => ExportFormatModel.fromMap(c as Map<dynamic, dynamic>))),
       keys: List<KeyModel>.from((map['keys'] as List<dynamic> ?? [])?.map((c) => KeyModel.fromMap(c as Map<dynamic, dynamic>))),
       words: List<WordModel>.from((map['words'] as List<dynamic> ?? [])?.map((c) => WordModel.fromMap(c as Map<dynamic, dynamic>))),
     );
@@ -70,10 +175,11 @@ class ProjectModel extends Equatable {
   ProjectModel copyWith({
     String id,
     String name,
-    List<String> locales,
-    String defaultLocale,
+    List<LocaleModel> locales,
+    LocaleModel defaultLocale,
     List<KeyModel> keys,
     List<WordModel> words,
+    List<ExportFormatModel> formats,
   }) {
     return ProjectModel(
       id: id ?? this.id,
@@ -82,13 +188,15 @@ class ProjectModel extends Equatable {
       defaultLocale: defaultLocale ?? this.defaultLocale,
       keys: keys ?? this.keys,
       words: words ?? this.words,
+      formats: formats ?? this.formats,
     );
   }
 
   ProjectModel copySettings({
     @required String name,
-    @required List<String> locales,
-    @required String defaultLocale,
+    @required List<LocaleModel> locales,
+    @required LocaleModel defaultLocale,
+    @required List<ExportFormatModel> formats,
   }) {
     return ProjectModel(
       id: id,
@@ -97,10 +205,11 @@ class ProjectModel extends Equatable {
       defaultLocale: defaultLocale ?? this.defaultLocale,
       keys: keys,
       words: words,
+      formats: formats ?? this.formats,
     );
   }
 
-  void import(String locale, Map<String, String> filesData) {
+  void import(LocaleModel locale, Map<String, String> filesData) {
     defaultLocale ??= locale;
     if (!locales.contains(locale)) {
       locales.add(locale);
@@ -111,7 +220,7 @@ class ProjectModel extends Equatable {
         key = KeyModel(id: Uuid().v4(), value: item);
         keys.add(key);
       }
-      final newKeyDiff = '${key.id}$locale';
+      final newKeyDiff = '${key.id}${locale.key}';
       if (wordMap.containsKey(newKeyDiff)) {
         // TODO: version for approve changed
         wordMap[newKeyDiff].value = filesData[item];
@@ -123,7 +232,44 @@ class ProjectModel extends Equatable {
     }
   }
 
-  WordModel getWord(String newkey, KeyModel key, String locale) {
+  Future export() async {
+    try {
+      if (formats == null || formats.isEmpty) {
+        throw Exception(TranslateService().locale.error_formats);
+      }
+      var index = 0;
+      for (var format in formats) {
+        var encoder = ZipEncoder();
+        final archive = Archive();
+        for (var locale in locales) {
+          final mapWord = <String, String>{};
+          final result = <String, String>{};
+          words.where((c) => c.locale == locale).map((e) => mapWord[e.keyId] = e.value).toList();
+          for (var item in keys) {
+            // TODO: check - maybe will give bug
+            result['"${item.value}"'] = '"${mapWord[item.id].replaceAll('\r', '\\r').replaceAll('\n', '\\n')}"';
+          }
+          final bytes = Utf8Codec().encode(result.toString());
+          final fileName =
+              '${format.prefix ?? ''}${locale.locale}${format.divider ?? ''}${locale.countryCode}${format.postfix ?? ''}.${format.fileExtension}';
+          final archiveFile = ArchiveFile(fileName, bytes.length, bytes);
+          archive.addFile(archiveFile);
+        }
+        final bytes = Utf8Codec().encode(toJson());
+        final archiveFile = ArchiveFile('ixn.json', bytes.length, bytes);
+        archive.addFile(archiveFile);
+        final bytesZip = encoder.encode(archive);
+        await manager.saveFile('$name-ixn-$index.zip', binaryData: bytesZip);
+        index++;
+      }
+      // projectScreen.import(filesData);
+    } catch (_, stackTrace) {
+      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
+      NotificationService.showError(_?.toString());
+    }
+  }
+
+  WordModel getWord(String newkey, KeyModel key, LocaleModel locale) {
     if (wordMap.containsKey(newkey)) {
       return wordMap[newkey];
     }
@@ -186,7 +332,7 @@ class WordModel extends Equatable {
   final int order;
   final int maxLength;
   final String keyId;
-  final String locale;
+  final LocaleModel locale;
   String value;
 
   /// for compare when differen values current and import. (must be null)
@@ -202,7 +348,7 @@ class WordModel extends Equatable {
   final List<ImageModel> images;
   final String notes;
 
-  String get keyDiff => '$keyId$locale';
+  String get keyDiff => '$keyId${locale.key}';
 
   WordModel({
     @required this.id,
@@ -241,7 +387,7 @@ class WordModel extends Equatable {
       'order': order,
       'maxLength': maxLength,
       'key': keyId,
-      'locale': locale,
+      'locale': locale.toMap(),
       'value': value,
       'origin': origin,
       'valueNewVersion': valueNewVersion,
@@ -260,7 +406,7 @@ class WordModel extends Equatable {
       order: map['order'] as int,
       maxLength: map['maxLength'] as int,
       keyId: map['key']?.toString(),
-      locale: map['locale']?.toString(),
+      locale: LocaleModel.fromMap(map['locale'] as Map<dynamic, dynamic>),
       value: map['value']?.toString(),
       origin: map['origin']?.toString(),
       valueNewVersion: map['valueNewVersion']?.toString(),
@@ -280,7 +426,7 @@ class WordModel extends Equatable {
     int order,
     int maxLength,
     String keyId,
-    String locale,
+    LocaleModel locale,
     String value,
     String origin,
     String valueNewVersion,

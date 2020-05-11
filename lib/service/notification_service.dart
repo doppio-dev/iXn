@@ -1,9 +1,10 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
 
 class NotificationService {
   static void showError(String error) {
-    BotToast.showNotification(duration: Duration(seconds: 4), onTap: () {}, title: (_) => Text(error));
+    BotToast.showNotification(duration: Duration(seconds: 7), onTap: () {}, title: (_) => Text(error));
   }
 
   static void showQuestion(String message, Function onDone) {
@@ -35,7 +36,7 @@ class NotificationService {
                     cancelFunc();
                     onDone();
                   },
-                  child: const Text('confirm'),
+                  child: Text(TranslateService().locale.notif_ok),
                 ),
               ),
             ],

@@ -1,14 +1,14 @@
+import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
-import 'package:doppio_dev_ixn/service/translate_service.dart';
 import 'package:flutter/material.dart';
 
 class LangDropdownWidget extends StatefulWidget {
-  final List<String> options;
+  final List<LocaleModel> options;
   final bool valueRequired;
   final String labelText;
   final Function(String value) select;
 
-  final String selectedValue;
+  final LocaleModel selectedValue;
   final double width;
 
   LangDropdownWidget({Key key, this.options, this.valueRequired = false, this.labelText, this.select, this.selectedValue, this.width})
@@ -24,17 +24,17 @@ class _LangDropdownWidgetState extends State<LangDropdownWidget> {
     return FormField<String>(
       validator: (String value) {
         if (widget.valueRequired && value == null) {
-          return 'value required';
+          return TranslateService().locale.value_required;
         }
         return null;
       },
       builder: (FormFieldState<String> state) {
         return InputDecorator(
           decoration: InputDecoration(labelText: widget.labelText),
-          isEmpty: widget.selectedValue == null || widget.selectedValue.isEmpty,
+          isEmpty: widget.selectedValue == null,
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: widget.selectedValue,
+              value: widget.selectedValue?.countryName,
               isDense: true,
               onChanged: (String newValue) {
                 setState(() {
@@ -42,13 +42,13 @@ class _LangDropdownWidgetState extends State<LangDropdownWidget> {
                 });
                 // FocusScope.of(context).focusInDirection(TraversalDirection.down);
               },
-              items: widget.options.map((String _code) {
+              items: widget.options.map((LocaleModel _code) {
                 return DropdownMenuItem<String>(
-                  value: _code,
+                  value: _code.countryName,
                   child: Container(
                     width: widget.width,
                     child: Text(
-                      '$_code - ${TranslateService.localeCountryName[_code]}',
+                      '$_code',
                       overflow: TextOverflow.clip,
                       maxLines: 1,
                       softWrap: true,

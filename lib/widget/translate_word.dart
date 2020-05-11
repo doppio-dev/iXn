@@ -64,7 +64,7 @@ class _TranslateWordState extends State<TranslateWord> {
             await Future.delayed(Duration(milliseconds: widget.text.length * 20));
             var newValue = await widget.translator.translate(widget.text, to: widget.toLocale);
             if (newValue == null) {
-              NotificationService.showError('429  for ${widget.text}');
+              NotificationService.showError(TranslateService().locale.translate_429(widget.text));
               return;
             }
             await cache.putAsync(key, newValue);

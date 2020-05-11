@@ -1,5 +1,6 @@
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:doppio_dev_ixn/core/index.dart';
 import 'package:flutter/material.dart';
 
 class EditLangWord extends StatefulWidget {
@@ -13,7 +14,7 @@ class EditLangWord extends StatefulWidget {
   }) : super(key: key);
 
   final ProjectModel projectModel;
-  final String locale;
+  final LocaleModel locale;
   final String title;
   final int index;
   final void Function() render;
@@ -26,26 +27,29 @@ class _EditLangWordState extends State<EditLangWord> {
   void Function() notif;
   @override
   Widget build(BuildContext context) {
+    final i10n = TranslateService().locale;
     final key = widget.projectModel.keys[widget.index];
-    final newkey = '${key.id}${widget.locale}';
-    final keyOrigin = '${key.id}${widget.projectModel.defaultLocale}';
+    final newkey = '${key.id}${widget.locale.key}';
+    final keyOrigin = '${key.id}${widget.projectModel.defaultLocale.key}';
     var word = widget.projectModel.getWord(newkey, key, widget.locale);
     var wordOrigin = widget.projectModel.getWord(keyOrigin, key, widget.projectModel.defaultLocale);
     var colorDescription = Colors.transparent;
     String description;
     if (word.origin != wordOrigin.value && widget.locale != widget.projectModel.defaultLocale) {
       if (word.origin == null) {
-        colorDescription = Colors.yellow.withOpacity(0.2);
-        description = 'Approve  after import';
-        notif = () {
-          setState(() {
-            word.origin = wordOrigin.value;
-          });
-          widget.render();
-        };
+        if (!word.value.isNullOrEmpty()) {
+          colorDescription = Colors.yellow.withOpacity(0.2);
+          description = i10n.edit_lang_approve;
+          notif = () {
+            setState(() {
+              word.origin = wordOrigin.value;
+            });
+            widget.render();
+          };
+        }
       } else {
         colorDescription = Colors.pink.withOpacity(0.2);
-        description = 'Default locale was changed';
+        description = i10n.edit_lang_changed;
       }
     }
 

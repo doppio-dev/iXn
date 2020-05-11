@@ -44,6 +44,15 @@ class S {
     );
   }
 
+  String get project_locale {
+    return Intl.message(
+      'Locale',
+      name: 'project_locale',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get projects_card_locales {
     return Intl.message(
       'Supported Locales',
@@ -160,6 +169,249 @@ class S {
       args: [locale, path],
     );
   }
+
+  String get project_name_no {
+    return Intl.message(
+      'No name',
+      name: 'project_name_no',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String project_name_title(Object name) {
+    return Intl.message(
+      'Project: $name',
+      name: 'project_name_title',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  String get project_add {
+    return Intl.message(
+      'Add',
+      name: 'project_add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_export {
+    return Intl.message(
+      'Export',
+      name: 'project_export',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_import {
+    return Intl.message(
+      'Import',
+      name: 'project_import',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_save {
+    return Intl.message(
+      'Save',
+      name: 'project_save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get error_error {
+    return Intl.message(
+      'Error',
+      name: 'error_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_empty {
+    return Intl.message(
+      'Please, add new key for control Localizations of your app',
+      name: 'project_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_export {
+    return Intl.message(
+      'Export settings',
+      name: 'project_setting_export',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_export_empty {
+    return Intl.message(
+      'Please add export setting',
+      name: 'project_setting_export_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_prefix {
+    return Intl.message(
+      'Prefix',
+      name: 'project_setting_prefix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_postfix {
+    return Intl.message(
+      'Postfix',
+      name: 'project_setting_postfix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_divider {
+    return Intl.message(
+      'Divider locale and country code',
+      name: 'project_setting_divider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_ext {
+    return Intl.message(
+      'File exteshion',
+      name: 'project_setting_ext',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get project_setting_filter {
+    return Intl.message(
+      'Filter for supported locales',
+      name: 'project_setting_filter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_title {
+    return Intl.message(
+      'Projects',
+      name: 'projects_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_add {
+    return Intl.message(
+      'Add',
+      name: 'projects_add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_show_remove {
+    return Intl.message(
+      'Show remove button',
+      name: 'projects_show_remove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_import {
+    return Intl.message(
+      'Import',
+      name: 'projects_import',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_emprty {
+    return Intl.message(
+      'Please, add new project for control Localizations of your apps',
+      name: 'projects_emprty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get projects_remove {
+    return Intl.message(
+      'Remove',
+      name: 'projects_remove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get notif_ok {
+    return Intl.message(
+      'Ok',
+      name: 'notif_ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get edit_lang_approve {
+    return Intl.message(
+      'Approve after import or change',
+      name: 'edit_lang_approve',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get edit_lang_changed {
+    return Intl.message(
+      'Value of default locale was changed',
+      name: 'edit_lang_changed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get value_required {
+    return Intl.message(
+      'value required',
+      name: 'value_required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String translate_429(Object text) {
+    return Intl.message(
+      '429  for $text',
+      name: 'translate_429',
+      desc: '',
+      args: [text],
+    );
+  }
+
+  String get error_formats {
+    return Intl.message(
+      'Add formats in setting of project',
+      name: 'error_formats',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -167,8 +419,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
-      Locale.fromSubtags(languageCode: 'ko', countryCode: 'KR'),
+      Locale.fromSubtags(languageCode: 'en', countryCode: 'US'),
       Locale.fromSubtags(languageCode: 'ru', countryCode: 'RU'),
     ];
   }

@@ -5,9 +5,9 @@ import 'package:semaphore/semaphore.dart';
 import 'package:pedantic/pedantic.dart';
 
 class HiveCacheManager {
-  String _key = 'cache_v1';
+  String _key = 'cache_v2';
   String _nameLogger = 'HiveCacheManager';
-  String _keyTime = 'cache_time_v1';
+  String _keyTime = 'cache_time_v2';
   Duration duration = Duration(hours: 8);
   final _sm = LocalSemaphore(1);
 
@@ -22,9 +22,9 @@ class HiveCacheManager {
   }
 
   void init(String name, Duration duration) {
-    _key = '${name.toLowerCase()}_cache_v1';
-    _nameLogger = '${name}CacheManager';
-    _keyTime = '${name.toLowerCase()}_time_cache_v1';
+    _key = '${name.toLowerCase()}$_key';
+    _nameLogger = '$name$_nameLogger';
+    _keyTime = '${name.toLowerCase()}$_keyTime';
     this.duration = duration;
   }
 

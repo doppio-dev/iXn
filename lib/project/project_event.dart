@@ -108,6 +108,7 @@ class LoadSettingProjectEvent extends ProjectEvent {
               name: project.name,
               defaultLocale: project.defaultLocale,
               locales: project.locales,
+              formats: project.formats,
             ),
             version: currentState.version + 1);
       }

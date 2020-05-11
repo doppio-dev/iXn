@@ -29,7 +29,7 @@ class ProjectScreenState extends State<ProjectScreen> {
 
   final translator = GoogleTranslator();
 
-  String selectedLocale;
+  LocaleModel selectedLocale;
 
   int currentVersionState;
 
@@ -61,17 +61,18 @@ class ProjectScreenState extends State<ProjectScreen> {
               child: CircularProgressIndicator(),
             );
           }
+          final i10n = TranslateService().locale;
           if (currentState is ErrorProjectState) {
             return Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(currentState.errorMessage ?? 'Error'),
+                Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: Text('reload'),
+                    child: Text(i10n.error_reload),
                     onPressed: _load,
                   ),
                 ),
@@ -81,13 +82,14 @@ class ProjectScreenState extends State<ProjectScreen> {
           if (currentState is InProjectState) {
             if (currentVersionState == null) {
               currentVersionState = currentState.version;
-              selectedLocale = widget.projectModel.defaultLocale;
+              selectedLocale = null;
             }
+
             // change setting
             if (currentVersionState != currentState.version) {
               currentVersionState = currentState.version;
               if (!widget.projectModel.locales.contains(selectedLocale)) {
-                selectedLocale = widget.projectModel.defaultLocale;
+                selectedLocale = null;
               }
             }
             return SingleChildScrollView(
@@ -128,7 +130,11 @@ class ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
-  Expanded _body(S i10n, double widthXl) {
+  Widget _body(S i10n, double widthXl) {
+    final length = widget.projectModel.keys?.length ?? 0;
+    if (length == 0) {
+      return Expanded(child: Empty(text: i10n.project_empty));
+    }
     return Expanded(
       child: ListView.builder(
         controller: scrollController,
@@ -149,21 +155,21 @@ class ProjectScreenState extends State<ProjectScreen> {
               divider(),
               Flexible(
                 child: EditLangWord(
-                    projectModel: widget.projectModel,
-                    locale: widget.projectModel.defaultLocale,
-                    title: i10n.project_default_locale,
-                    index: index,
-                    render: renderUpdate),
+                  projectModel: widget.projectModel,
+                  locale: widget.projectModel.defaultLocale,
+                  title: i10n.project_default_locale,
+                  index: index,
+                ),
                 flex: 3,
                 fit: FlexFit.tight,
               ),
               divider(),
-              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty)
-                ..._editLocale(selectedLocale, selectedLocale, index, widthXl),
+              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty && selectedLocale != null)
+                ..._editLocale(selectedLocale.toString(), selectedLocale, index, widthXl),
             ],
           );
         },
-        itemCount: widget.projectModel.keys?.length ?? 0,
+        itemCount: length,
       ),
     );
   }
@@ -200,14 +206,15 @@ class ProjectScreenState extends State<ProjectScreen> {
             child: Container(
               width: 100,
               child: LangDropdownWidget(
-                options: widget.projectModel.locales,
-                labelText: i10n.project_default_locale,
+                options: widget.projectModel.locales.where((element) => element != widget.projectModel.defaultLocale).toList(),
+                labelText: i10n.project_locale,
                 selectedValue: selectedLocale,
                 // TODO: remove, how?!
                 width: widthXl - 24,
                 select: (newValue) {
+                  var newLocale = LocaleModel.from(MapEntry(newValue?.toString(), TranslateService.countryName2Code[newValue?.toString()]));
                   setState(() {
-                    selectedLocale = newValue?.toString();
+                    selectedLocale = newLocale;
                   });
                 },
               ),
@@ -227,7 +234,7 @@ class ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
-  List<Widget> _editLocale(String title, String locale, int index, double width) {
+  List<Widget> _editLocale(String title, LocaleModel locale, int index, double width) {
     return [
       Flexible(
         child: EditLangWord(
@@ -235,7 +242,6 @@ class ProjectScreenState extends State<ProjectScreen> {
           locale: locale,
           title: title,
           index: index,
-          render: renderUpdate,
         ),
         flex: 3,
         fit: FlexFit.tight,
@@ -261,12 +267,12 @@ class ProjectScreenState extends State<ProjectScreen> {
     return Container();
   }
 
-  Widget _langAuto(String locale, int index, double width) {
+  Widget _langAuto(LocaleModel locale, int index, double width) {
     final key = widget.projectModel.keys[index];
-    final newkey = '${key.id}$locale';
+    final newkey = '${key.id}${widget.projectModel.defaultLocale.key}';
     var word = widget.projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: widget.projectModel.defaultLocale);
     // TODO: remove width
-    return TranslateWord(translator: translator, text: word.value, toLocale: locale, key: Key('${newkey}_auto'), width: width);
+    return TranslateWord(translator: translator, text: word.value, toLocale: locale.locale, key: Key('${newkey}_auto'), width: width);
   }
 
   Future<void> _load([bool isError = false]) async {
