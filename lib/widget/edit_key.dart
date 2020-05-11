@@ -26,24 +26,20 @@ class _EditKeyState extends State<EditKey> {
       controller = TextEditingController(text: key.value);
     }
     // controller.selection =
-    return Tooltip(
-      key: Key('${key.id}_tooltip'),
-      message: '',
-      child: Container(
-        // color: colorDescription,
-        child: TextFormField(
-          key: Key('${key.id}_edit'),
-          controller: controller,
-          maxLines: null,
-          onChanged: (value) {
-            setState(() {
-              key.value = value.toString();
-            });
-            if (widget.render != null) {
-              widget.render();
-            }
-          },
-        ),
+    return Container(
+      // color: colorDescription,
+      child: TextFormField(
+        key: Key('${key.id}_edit'),
+        controller: controller,
+        maxLines: null,
+        onChanged: (value) {
+          setState(() {
+            key.value = value.toString();
+          });
+          if (widget.render != null) {
+            widget.render();
+          }
+        },
       ),
     );
   }

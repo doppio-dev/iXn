@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:archive/archive_io.dart';
 import 'package:doppio_dev_ixn/core/index.dart';
 import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
@@ -10,7 +7,6 @@ import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:uuid/uuid.dart';
-import 'package:file_manager/file_manager.dart' as manager;
 
 class ProjectPage extends StatefulWidget {
   static const String routeName = '/project';
@@ -50,6 +46,7 @@ class _ProjectPageState extends State<ProjectPage> {
             projectModel = currentState.project.copyWith();
             currentVersionState = currentState.version;
           }
+
           // change setting
           if (currentVersionState != currentState.version) {
             currentVersionState = currentState.version;
@@ -58,13 +55,16 @@ class _ProjectPageState extends State<ProjectPage> {
               defaultLocale: pr.defaultLocale,
               locales: pr.locales,
               name: pr.name,
+              formats: pr.formats,
             );
           }
         }
         projectScreen = ProjectScreen(projectBloc: _projectBloc, projectModel: projectModel);
+        final i10n = TranslateService().locale;
+        final name = projectModel?.name ?? i10n.project_name_no;
         return Scaffold(
           appBar: AppBar(
-            title: Text('Project'),
+            title: Text(i10n.project_name_title(name)),
             actions: [
               IconButton(
                 icon: Icon(Icons.settings),
@@ -92,29 +92,29 @@ class _ProjectPageState extends State<ProjectPage> {
                     onPressed: () async {
                       _addKey();
                     },
-                    tooltip: 'Add',
+                    tooltip: i10n.project_add,
                     icon: Icon(Icons.add),
                   ),
                   Spacer(),
                   IconButton(
                     onPressed: () async {
-                      await _export(projectModel);
+                      await projectModel.export();
                     },
-                    tooltip: 'Export',
+                    tooltip: i10n.project_export,
                     icon: Icon(Icons.file_upload),
                   ),
                   IconButton(
                     onPressed: () async {
                       await _import();
                     },
-                    tooltip: 'Import',
+                    tooltip: i10n.project_import,
                     icon: Icon(Icons.file_download),
                   ),
                   IconButton(
                     onPressed: () async {
                       _projectBloc.add(SaveProjectEvent(projectModel));
                     },
-                    tooltip: 'Save',
+                    tooltip: i10n.project_save,
                     icon: Icon(Icons.save),
                   ),
                 ],
@@ -130,9 +130,11 @@ class _ProjectPageState extends State<ProjectPage> {
   Future _import() async {
     try {
       final filesData = await TranslateService().importFiles();
-      for (var locale in filesData.keys) {
+      for (var locale in filesData?.keys ?? <String>[]) {
+        var localeCode = TranslateService.countryName2Code.entries.firstWhere((element) => element.value == locale);
+        var localeModel = LocaleModel.from(localeCode);
         setState(() {
-          projectModel.import(locale, filesData[locale]);
+          projectModel.import(localeModel, filesData[locale]);
         });
       }
     } catch (_, stackTrace) {
@@ -146,29 +148,5 @@ class _ProjectPageState extends State<ProjectPage> {
       var newKeys = projectModel.keys ?? [];
       newKeys.add(KeyModel(id: Uuid().v4()));
     });
-  }
-
-  Future _export(ProjectModel projectModel) async {
-    try {
-      var encoder = ZipEncoder();
-      final archive = Archive();
-      for (var locale in projectModel.locales) {
-        final mapWord = <String, String>{};
-        final result = <String, String>{};
-        projectModel.words.where((c) => c.locale == locale).map((e) => mapWord[e.keyId] = e.value).toList();
-        for (var item in projectModel.keys) {
-          result['"${item.value}"'] = '"${mapWord[item.id]}"';
-        }
-        final bytes = Utf8Codec().encode(result.toString());
-        final archiveFile = ArchiveFile('$locale.json', bytes.length, bytes);
-        archive.addFile(archiveFile);
-      }
-      final bytesZip = encoder.encode(archive);
-      await manager.saveFile('${projectModel.name}-ixn.zip', binaryData: bytesZip);
-      // projectScreen.import(filesData);
-    } catch (_, stackTrace) {
-      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      NotificationService.showError(_?.toString());
-    }
   }
 }

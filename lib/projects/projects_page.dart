@@ -1,11 +1,11 @@
-import 'package:doppio_dev_ixn/core/logger.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
 import 'package:uuid/uuid.dart';
-import 'package:file_access/file_access.dart' as file_access;
-import 'package:doppio_dev_ixn/core/index.dart';
+// import 'package:file_access/file_access.dart' as file_access;
+// import 'package:doppio_dev_ixn/core/index.dart';
+// import 'package:doppio_dev_ixn/core/logger.dart';
 
 class ProjectsPage extends StatefulWidget {
   static const String routeName = '/projects';
@@ -20,10 +20,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final i10n = TranslateService().locale;
     return Scaffold(
         key: Key('projecs_sc'),
         appBar: AppBar(
-          title: Text('Projects'),
+          title: Text(i10n.projects_title),
         ),
         body: projectsScreen,
         persistentFooterButtons: <Widget>[
@@ -35,7 +36,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   onPressed: () async {
                     projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
                   },
-                  tooltip: 'Add',
+                  tooltip: i10n.projects_add,
                   icon: Icon(Icons.add),
                 ),
                 IconButton(
@@ -43,34 +44,34 @@ class _ProjectsPageState extends State<ProjectsPage> {
                     showRemove = !showRemove;
                     projectsScreen.projectsBloc.add(ViewProjectsEvent(showRemove: showRemove));
                   },
-                  tooltip: 'Show remove button',
+                  tooltip: i10n.projects_show_remove,
                   icon: Icon(Icons.remove),
                 ),
                 Spacer(),
-                IconButton(
-                  onPressed: () async {
-                    await _import();
-                  },
-                  tooltip: 'Import',
-                  icon: Icon(Icons.file_download),
-                ),
+                // IconButton(
+                //   onPressed: () async {
+                //     await _import();
+                //   },
+                //   tooltip: i10n.projects_import,
+                //   icon: Icon(Icons.file_download),
+                // ),
               ],
             ),
           ),
         ]);
   }
 
-  Future _import() async {
-    try {
-      final newFiles = (await file_access.open(false, false, allowedTypes: ['zip']));
-      final newFile = newFiles.firstOrDefault;
-      print(newFile?.path);
-      // var text = await newFile.readAsString();
-      // var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
-      // print(json);
-    } catch (_, stackTrace) {
-      log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
-      NotificationService.showError(_?.toString());
-    }
-  }
+  // Future _import() async {
+  //   try {
+  //     final newFiles = (await file_access.open(false, false, allowedTypes: ['zip']));
+  //     final newFile = newFiles.firstOrDefault;
+  //     print(newFile?.path);
+  //     // var text = await newFile.readAsString();
+  //     // var json = Map<String, String>.from(jsonDecode(text) as Map<dynamic, dynamic>);
+  //     // print(json);
+  //   } catch (_, stackTrace) {
+  //     log(_?.toString(), name: 'ProjectsPage', error: _, stackTrace: stackTrace);
+  //     NotificationService.showError(_?.toString());
+  //   }
+  // }
 }

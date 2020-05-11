@@ -1,10 +1,11 @@
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:doppio_dev_ixn/core/index.dart';
+import 'package:doppio_dev_ixn/widget/index.dart';
 import 'package:doppio_dev_ixn/widget/lang_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ProjectSettingScreen extends StatefulWidget {
   const ProjectSettingScreen({
@@ -30,14 +31,15 @@ class ProjectSettingScreen extends StatefulWidget {
 class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   ProjectSettingScreenState();
   final i10n = TranslateService().locale;
-  List<String> locales;
-  Map<String, String> localesList;
+  List<LocaleModel> locales;
 
   @override
   void initState() {
-    locales = kMaterialSupportedLanguages.toList();
-    locales.sort();
-    localesList = {for (var code in locales) code: '$code - ${TranslateService.localeCountryName[code]}'};
+    locales = [];
+    for (final key in TranslateService.countryName2Code.keys) {
+      final split = TranslateService.countryName2Code[key].split('-');
+      locales.add(LocaleModel(countryName: key, locale: split[0], countryCode: split[1]));
+    }
     super.initState();
   }
 
@@ -55,6 +57,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
           ProjectSettingState currentState,
         ) {
           ContextService().buidlContext(context);
+          final i10n = TranslateService().locale;
           if (currentState is UnProjectSettingState) {
             _load(context);
             return Center(
@@ -66,12 +69,12 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(currentState.errorMessage ?? 'Error'),
+                Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: Text('reload'),
+                    child: Text(i10n.error_reload),
                     onPressed: () {
                       _load(context);
                     },
@@ -90,8 +93,11 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   }
 
   TextEditingController textEditingController;
+  String filter;
 
   Widget _settings(InProjectSettingState currentState) {
+    final i10n = TranslateService().locale;
+    final textTheme = ContextService().textTheme;
     if (textEditingController == null || textEditingController.text != widget.projectModel.name) {
       textEditingController = TextEditingController(text: widget.projectModel.name);
     }
@@ -118,18 +124,138 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
               selectedValue: widget.projectModel.defaultLocale,
               select: (newValue) {
                 setState(() {
-                  widget.projectModel.defaultLocale = newValue?.toString();
-                  if (!widget.projectModel.locales.contains(newValue)) {
-                    widget.projectModel.locales.add(newValue.toString());
+                  var newLocale = LocaleModel.from(MapEntry(newValue?.toString(), TranslateService.countryName2Code[newValue?.toString()]));
+                  widget.projectModel.defaultLocale = newLocale;
+                  if (!widget.projectModel.locales.contains(newLocale)) {
+                    widget.projectModel.locales.add(newLocale);
                   }
                 });
               },
+            ),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      i10n.project_setting_export,
+                      style: textTheme.caption,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        widget.projectModel.formats ??= [];
+                        var ext = 'json';
+                        var prefix = '';
+                        var divider = '-';
+                        if (widget.projectModel.formats.length == 1) {
+                          ext = 'arb';
+                          prefix = 'intl_';
+                          divider = '_';
+                        }
+                        setState(() {
+                          widget.projectModel.formats.add(ExportFormatModel(fileExtension: ext, prefix: prefix, divider: divider));
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                if (widget.projectModel.formats == null || widget.projectModel.formats.isEmpty)
+                  Container(width: ContextService().deviceSize.width, height: 80, child: Empty(text: i10n.project_setting_export_empty)),
+                if (widget.projectModel.formats != null)
+                  ...widget.projectModel.formats.map(
+                    (e) => Container(
+                      width: ContextService().deviceSize.width,
+                      child: Row(
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: TextFormField(
+                              initialValue: e.prefix ?? '',
+                              decoration: InputDecoration(labelText: i10n.project_setting_prefix),
+                              onChanged: (value) {
+                                setState(() {
+                                  e.prefix = value;
+                                });
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                              child: TextFormField(
+                                initialValue: e.divider ?? '',
+                                decoration: InputDecoration(labelText: i10n.project_setting_divider),
+                                onChanged: (value) {
+                                  setState(() {
+                                    e.divider = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                              child: TextFormField(
+                                initialValue: e.postfix ?? '',
+                                decoration: InputDecoration(labelText: i10n.project_setting_postfix),
+                                onChanged: (value) {
+                                  setState(() {
+                                    e.postfix = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: TextFormField(
+                              initialValue: e.fileExtension ?? '',
+                              decoration: InputDecoration(labelText: i10n.project_setting_ext),
+                              onChanged: (value) {
+                                setState(() {
+                                  e.fileExtension = value;
+                                });
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  widget.projectModel.formats.remove(e);
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: TextFormField(
+                decoration: InputDecoration(labelText: i10n.project_setting_filter),
+                onChanged: (value) {
+                  setState(() {
+                    filter = value;
+                  });
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 4),
               child: Text(
                 i10n.projects_card_locales,
-                style: ContextService().textTheme.caption,
+                style: textTheme.caption,
               ),
             ),
             _buildTargetLocales(),
@@ -140,6 +266,8 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   }
 
   Widget _buildTargetLocales() {
+    final filtered =
+        filter.isNullOrEmpty() ? locales : locales.where((element) => element.toString().toLowerCase().contains(filter.toLowerCase())).toList();
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -148,7 +276,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
         ),
         child: ListView.builder(
           itemBuilder: (context, index) {
-            final code = locales[index];
+            final code = filtered[index];
             return Row(
               children: [
                 Checkbox(
@@ -171,14 +299,14 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    '$code - ${TranslateService.localeCountryName[code]}',
+                    '$code',
                     overflow: TextOverflow.clip,
                   ),
                 )
               ],
             );
           },
-          itemCount: kMaterialSupportedLanguages.length,
+          itemCount: filtered.length,
         ),
       ),
     );

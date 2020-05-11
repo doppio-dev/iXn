@@ -3,6 +3,7 @@ import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:doppio_dev_ixn/service/context_service.dart';
 import 'package:doppio_dev_ixn/service/translate_service.dart';
+import 'package:doppio_dev_ixn/widget/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
@@ -45,6 +46,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
           ProjectsState currentState,
         ) {
           ContextService().buidlContext(context);
+          final i10n = TranslateService().locale;
           if (currentState is UnProjectsState) {
             return Center(
               child: CircularProgressIndicator(),
@@ -55,12 +57,12 @@ class ProjectsScreenState extends State<ProjectsScreen> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(currentState.errorMessage ?? 'Error'),
+                Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: Text('reload'),
+                    child: Text(i10n.error_reload),
                     onPressed: _load,
                   ),
                 ),
@@ -68,6 +70,9 @@ class ProjectsScreenState extends State<ProjectsScreen> {
             ));
           }
           if (currentState is InProjectsState) {
+            if (currentState.projects == null || currentState.projects.isEmpty) {
+              return Empty(text: i10n.projects_emprty);
+            }
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
@@ -117,7 +122,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: RaisedButton(
                       color: Colors.red,
-                      child: Text('Remove'),
+                      child: Text(i10n.projects_remove),
                       onPressed: () {
                         widget.projectsBloc.add(RemoveProjectsEvent(projectModel: e));
                       },
