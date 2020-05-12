@@ -10,6 +10,7 @@ import 'package:doppio_dev_ixn/core/simple_bloc_delegate.dart';
 import 'project/index.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(debugLabel: 'mainApp');
+String appVersion;
 
 Future<void> main() async {
   await init();
@@ -28,6 +29,7 @@ Future<void> init({bool ensureInitialized = true}) async {
     BlocSupervisor.delegate = SimpleBlocDelegate();
     await ProjectsCacheManager().openAsync();
     await AutoTranslateCacheManager().openAsync();
+    appVersion = '0.1.0+1';
   } catch (error, stackTrace) {
     log('$error', name: 'Main', error: '$error', stackTrace: stackTrace);
   }
