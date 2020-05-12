@@ -27,6 +27,7 @@ No, this a product for users who want control localization of apps.
     - export to json.arb, custom format(json)
     - UI for edit words
     - web and mac version
+    - check update version
 
 [ ] compare origin and import
 
@@ -47,6 +48,8 @@ No, this a product for users who want control localization of apps.
 [ ] windows and linux version
 
 [ ] app settings(locale & theme)
+
+[ ] use DI (kiwi)
 
 Screens:
 
