@@ -9,6 +9,10 @@ please support me:
 - install extension for BLoC - [[FF] Flutter Files](https://marketplace.visualstudio.com/items?itemName=gornivv.vscode-flutter-files)
 - use flutter - flutter the best!
 
+## it-challenge
+
+Create it product every day! - https://medium.com/it-challenge
+
 ## Is it ideal code?
 
 No, this a product for users who want control localization of apps.
