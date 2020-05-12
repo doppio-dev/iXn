@@ -2,6 +2,17 @@
 
 Control your localization of apps with iXn!
 
+please support me:
+
+- star my repo and use app
+- install [meows.app](https://meows.app) - player for Apple Music (use flutter)
+- install extension for BLoC - [[FF] Flutter Files](https://marketplace.visualstudio.com/items?itemName=gornivv.vscode-flutter-files)
+- use flutter - flutter the best!
+
+## it-challenge
+
+Create it product every day! - https://medium.com/it-challenge
+
 ## Is it ideal code?
 
 No, this a product for users who want control localization of apps.
@@ -16,6 +27,7 @@ No, this a product for users who want control localization of apps.
     - export to json.arb, custom format(json)
     - UI for edit words
     - web and mac version
+    - check update version
 
 [ ] compare origin and import
 
@@ -36,6 +48,8 @@ No, this a product for users who want control localization of apps.
 [ ] windows and linux version
 
 [ ] app settings(locale & theme)
+
+[ ] use DI (kiwi)
 
 Screens:
 

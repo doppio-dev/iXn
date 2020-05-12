@@ -368,6 +368,24 @@ class S {
     );
   }
 
+  String get notif_update {
+    return Intl.message(
+      'Update',
+      name: 'notif_update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get notif_need_update {
+    return Intl.message(
+      'Please, update to last version fo the app',
+      name: 'notif_need_update',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get edit_lang_approve {
     return Intl.message(
       'Approve after import or change',

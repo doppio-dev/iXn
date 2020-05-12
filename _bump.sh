@@ -14,5 +14,5 @@ else
 fi
 echo 'version: '$newversion
 sed -i '' 's|version: .*|version: '$newversion'|' pubspec.yaml
-# sed -i '' 's|appVersion = .*|appVersion = \"'$newversion'\";|g' lib/main.dart
+sed -i '' 's|appVersion = .*|appVersion = \"'$newversion'\";|g' lib/main.dart
 echo 'bumped version'
