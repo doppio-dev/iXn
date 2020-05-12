@@ -2,6 +2,13 @@
 
 Control your localization of apps with iXn!
 
+please support me:
+
+- star my repo and use app
+- install [meows.app](https://meows.app) - player for Apple Music (use flutter)
+- install extension for BLoC - [[FF] Flutter Files](https://marketplace.visualstudio.com/items?itemName=gornivv.vscode-flutter-files)
+- use flutter - flutter the best!
+
 ## Is it ideal code?
 
 No, this a product for users who want control localization of apps.
