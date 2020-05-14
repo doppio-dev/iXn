@@ -63,7 +63,7 @@ dependencies:
       ref: master
       path: file_manager
   archive: 2.0.13
-
+  line_awesome_icons: 1.0.4+2
 # dependency_overrides:
 #   path: 1.7.0
 

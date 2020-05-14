@@ -2,6 +2,8 @@ import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 // import 'package:file_access/file_access.dart' as file_access;
 // import 'package:doppio_dev_ixn/core/index.dart';
@@ -25,6 +27,17 @@ class _ProjectsPageState extends State<ProjectsPage> {
         key: Key('projecs_sc'),
         appBar: AppBar(
           title: Text(i10n.projects_title),
+          actions: [
+            IconButton(
+              icon: Icon(LineAwesomeIcons.github),
+              onPressed: () async {
+                final url = 'https://github.com/doppio-dev/iXn';
+                if (await canLaunch(url)) {
+                  await launch(url);
+                }
+              },
+            )
+          ],
         ),
         body: projectsScreen,
         persistentFooterButtons: <Widget>[

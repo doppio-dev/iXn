@@ -22,7 +22,7 @@ No, this a product for users who want control localization of apps.
 [+] MVP:
 
     - google translate
-    - import json and arb
+    - import/export json and arb
     - control change after change default locale
     - export to json.arb, custom format(json)
     - UI for edit words
@@ -50,6 +50,8 @@ No, this a product for users who want control localization of apps.
 [ ] app settings(locale & theme)
 
 [ ] use DI (kiwi)
+
+[ ] Support XCode format files
 
 Screens:
 
