@@ -108,6 +108,7 @@ class ProjectModel extends Equatable {
   String name;
   List<LocaleModel> locales;
   LocaleModel defaultLocale;
+  LocaleModel selectedEditLocale;
   final List<KeyModel> keys;
   List<WordModel> words;
   List<ExportFormatModel> formats;
@@ -119,6 +120,7 @@ class ProjectModel extends Equatable {
     this.keys,
     this.locales,
     this.defaultLocale,
+    this.selectedEditLocale,
     this.words,
     this.formats,
   }) {
@@ -137,6 +139,7 @@ class ProjectModel extends Equatable {
         keys,
         locales,
         defaultLocale,
+        selectedEditLocale,
         words,
         formats,
       ];
@@ -148,6 +151,7 @@ class ProjectModel extends Equatable {
       'keys': keys?.map((x) => x?.toMap())?.toList(),
       'formats': formats?.map((x) => x?.toMap())?.toList(),
       'locales': locales?.map((x) => x?.toMap())?.toList(),
+      'selectedEditLocale': selectedEditLocale?.toMap(),
       'defaultLocale': defaultLocale?.toMap(),
       'words': words?.map((x) => x?.toMap())?.toList(),
     };
@@ -160,6 +164,7 @@ class ProjectModel extends Equatable {
       id: map['id']?.toString(),
       name: map['name']?.toString(),
       defaultLocale: LocaleModel.fromMap(map['defaultLocale'] as Map<dynamic, dynamic>),
+      selectedEditLocale: LocaleModel.fromMap(map['selectedEditLocale'] as Map<dynamic, dynamic>),
       locales: List<LocaleModel>.from((map['locales'] as List<dynamic> ?? [])?.map((c) => LocaleModel.fromMap(c as Map<dynamic, dynamic>))),
       formats:
           List<ExportFormatModel>.from((map['formats'] as List<dynamic> ?? [])?.map((c) => ExportFormatModel.fromMap(c as Map<dynamic, dynamic>))),
@@ -177,6 +182,7 @@ class ProjectModel extends Equatable {
     String name,
     List<LocaleModel> locales,
     LocaleModel defaultLocale,
+    LocaleModel selectedEditLocale,
     List<KeyModel> keys,
     List<WordModel> words,
     List<ExportFormatModel> formats,
@@ -184,11 +190,14 @@ class ProjectModel extends Equatable {
     return ProjectModel(
       id: id ?? this.id,
       name: name ?? this.name,
-      locales: locales != null ? [...locales] : [...this.locales ?? []],
+      locales: locales != null
+          ? locales.map((e) => LocaleModel.fromMap(e.toMap())).toList()
+          : this.locales.map((e) => LocaleModel.fromMap(e.toMap())).toList(),
       defaultLocale: defaultLocale ?? this.defaultLocale,
-      keys: keys ?? this.keys,
-      words: words ?? this.words,
-      formats: formats ?? this.formats,
+      selectedEditLocale: selectedEditLocale ?? this.selectedEditLocale,
+      keys: keys ?? this.keys.map((e) => KeyModel.fromMap(e.toMap())).toList(),
+      words: words ?? this.words.map((e) => WordModel.fromMap(e.toMap())).toList(),
+      formats: formats ?? this.formats.map((e) => ExportFormatModel.fromMap(e.toMap())).toList(),
     );
   }
 
@@ -201,11 +210,14 @@ class ProjectModel extends Equatable {
     return ProjectModel(
       id: id,
       name: name ?? this.name,
-      locales: locales != null ? [...locales] : [...this.locales ?? []],
+      locales: locales != null
+          ? locales.map((e) => LocaleModel.fromMap(e.toMap())).toList()
+          : this.locales.map((e) => LocaleModel.fromMap(e.toMap())).toList(),
       defaultLocale: defaultLocale ?? this.defaultLocale,
       keys: keys,
       words: words,
-      formats: formats ?? this.formats,
+      selectedEditLocale: selectedEditLocale,
+      formats: formats ?? this.formats.map((e) => ExportFormatModel.fromMap(e.toMap())).toList(),
     );
   }
 

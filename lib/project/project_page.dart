@@ -62,69 +62,108 @@ class _ProjectPageState extends State<ProjectPage> {
         projectScreen = ProjectScreen(projectBloc: _projectBloc, projectModel: projectModel);
         final i10n = TranslateService().locale;
         final name = projectModel?.name ?? i10n.project_name_no;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(i10n.project_name_title(name)),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  final args = ModalRoute.of(context).settings.arguments as Map<String, Object>;
-                  if (args == null) {
-                    print('args==null');
-                    return;
-                  }
-                  final id = args['id'] as String;
-                  unawaited(navigatorKey.currentState.pushNamed(
-                    ProjectSettingPage.routeName,
-                    arguments: {'id': id},
-                  ));
-                },
-              )
-            ],
-          ),
-          persistentFooterButtons: <Widget>[
-            Container(
-              width: ContextService().deviceSize.width,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      _addKey();
-                    },
-                    tooltip: i10n.project_add,
-                    icon: Icon(Icons.add),
-                  ),
-                  Spacer(),
-                  IconButton(
-                    onPressed: () async {
-                      await projectModel.export();
-                    },
-                    tooltip: i10n.project_export,
-                    icon: Icon(Icons.file_upload),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await _import();
-                    },
-                    tooltip: i10n.project_import,
-                    icon: Icon(Icons.file_download),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      _projectBloc.add(SaveProjectEvent(projectModel));
-                    },
-                    tooltip: i10n.project_save,
-                    icon: Icon(Icons.save),
-                  ),
-                ],
-              ),
+        return WillPopScope(
+          onWillPop: () => _willPop(currentState as InProjectState),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(i10n.project_name_title(name)),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    final args = ModalRoute.of(context).settings.arguments as Map<String, Object>;
+                    if (args == null) {
+                      print('args==null');
+                      return;
+                    }
+                    final id = args['id'] as String;
+                    unawaited(navigatorKey.currentState.pushNamed(
+                      ProjectSettingPage.routeName,
+                      arguments: {'id': id},
+                    ));
+                  },
+                )
+              ],
             ),
-          ],
-          body: projectScreen,
+            persistentFooterButtons: <Widget>[
+              Container(
+                width: ContextService().deviceSize.width,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        _addKey();
+                      },
+                      tooltip: i10n.project_add,
+                      icon: Icon(Icons.add),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () async {
+                        await projectModel.export();
+                      },
+                      tooltip: i10n.project_export,
+                      icon: Icon(Icons.file_upload),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await _import();
+                      },
+                      tooltip: i10n.project_import,
+                      icon: Icon(Icons.file_download),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        _projectBloc.add(SaveProjectEvent(projectModel));
+                      },
+                      tooltip: i10n.project_save,
+                      icon: Icon(Icons.save),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            body: projectScreen,
+          ),
         );
       },
     );
+  }
+
+  Future<bool> _willPop(InProjectState currentState) async {
+    var canPop = currentState.project == projectModel;
+    final i10n = TranslateService().locale;
+    if (!canPop) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) => AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(i10n.save_data),
+              GestureDetector(child: Icon(Icons.close), onTap: () => navigatorKey.currentState.pop()),
+            ],
+          ),
+          content: Text(i10n.error_unsaved),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  _projectBloc.add(SaveProjectEvent(projectModel));
+                  navigatorKey.currentState.pop();
+                  canPop = true;
+                },
+                child: Text(i10n.save)),
+            FlatButton(
+                onPressed: () {
+                  navigatorKey.currentState.pop();
+                  canPop = true;
+                },
+                child: Text(i10n.discard)),
+          ],
+        ),
+      );
+    }
+    return Future.value(canPop);
   }
 
   Future _import() async {

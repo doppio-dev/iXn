@@ -368,6 +368,15 @@ class S {
     );
   }
 
+  String get notif_clipboard {
+    return Intl.message(
+      'Text copied to buffer',
+      name: 'notif_clipboard',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get notif_update {
     return Intl.message(
       'Update',
@@ -379,7 +388,7 @@ class S {
 
   String get notif_need_update {
     return Intl.message(
-      'Please, update to last version fo the app',
+      'Please, update to last version of the app',
       name: 'notif_need_update',
       desc: '',
       args: [],

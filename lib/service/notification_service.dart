@@ -8,6 +8,10 @@ class NotificationService {
     BotToast.showNotification(duration: Duration(seconds: 7), onTap: () {}, title: (_) => Text(error));
   }
 
+  static void showInfo(String text) {
+    BotToast.showNotification(duration: Duration(seconds: 3), onTap: () {}, title: (_) => Text(text));
+  }
+
   static void showQuestion(String message, Function onDone) {
     BotToast.showCustomNotification(
       duration: Duration(seconds: 10),

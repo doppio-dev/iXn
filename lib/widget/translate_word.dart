@@ -1,6 +1,7 @@
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:doppio_dev_ixn/core/index.dart';
 import 'package:translator/translator.dart';
@@ -44,7 +45,17 @@ class _TranslateWordState extends State<TranslateWord> {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Container(width: widget.width - 48, child: SelectableText(translatedText ?? '')),
+        GestureDetector(
+          onDoubleTap: () {
+            Clipboard.setData(ClipboardData(text: translatedText));
+            NotificationService.showInfo(TranslateService().locale.notif_clipboard);
+          },
+          child: Container(
+            width: widget.width - 48,
+            color: Colors.transparent,
+            child: SelectableText(translatedText ?? ''),
+          ),
+        ),
         IconButton(
           icon: Icon(
             Icons.refresh,

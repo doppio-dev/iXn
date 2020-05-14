@@ -29,8 +29,6 @@ class ProjectScreenState extends State<ProjectScreen> {
 
   final translator = GoogleTranslator();
 
-  LocaleModel selectedLocale;
-
   int currentVersionState;
 
   ProjectScreenState();
@@ -80,16 +78,13 @@ class ProjectScreenState extends State<ProjectScreen> {
             ));
           }
           if (currentState is InProjectState) {
-            if (currentVersionState == null) {
-              currentVersionState = currentState.version;
-              selectedLocale = null;
-            }
+            currentVersionState ??= currentState.version;
 
             // change setting
             if (currentVersionState != currentState.version) {
               currentVersionState = currentState.version;
-              if (!widget.projectModel.locales.contains(selectedLocale)) {
-                selectedLocale = null;
+              if (!widget.projectModel.locales.contains(widget.projectModel.selectedEditLocale)) {
+                widget.projectModel.selectedEditLocale = null;
               }
             }
             return SingleChildScrollView(
@@ -109,7 +104,7 @@ class ProjectScreenState extends State<ProjectScreen> {
 
   Widget mainEditor(InProjectState currentState) {
     var size = ContextService().deviceSize;
-    final count = 11;
+    final count = 10;
     final countD = 5;
     final widthD = 10;
     final widthXl = (size.width - countD * widthD) / count * 3;
@@ -141,11 +136,11 @@ class ProjectScreenState extends State<ProjectScreen> {
         itemBuilder: (context, index) {
           return Row(
             children: [
-              Flexible(
-                child: _tree(index: index),
-                flex: 1,
-                fit: FlexFit.tight,
-              ),
+              // Flexible(
+              //   child: _tree(index: index),
+              //   flex: 1,
+              //   fit: FlexFit.tight,
+              // ),
               divider(),
               Flexible(
                 child: EditKey(projectModel: widget.projectModel, index: index, render: renderUpdate),
@@ -164,8 +159,8 @@ class ProjectScreenState extends State<ProjectScreen> {
                 fit: FlexFit.tight,
               ),
               divider(),
-              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty && selectedLocale != null)
-                ..._editLocale(selectedLocale.toString(), selectedLocale, index, widthXl),
+              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty && widget.projectModel.selectedEditLocale != null)
+                ..._editLocale(widget.projectModel.selectedEditLocale.toString(), widget.projectModel.selectedEditLocale, index, widthXl),
             ],
           );
         },
@@ -183,11 +178,11 @@ class ProjectScreenState extends State<ProjectScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
-        Flexible(
-          child: _tree(),
-          flex: 1,
-          fit: FlexFit.tight,
-        ),
+        // Flexible(
+        //   child: _tree(),
+        //   flex: 1,
+        //   fit: FlexFit.tight,
+        // ),
         divider(),
         Flexible(
           child: Text(i10n.project_key),
@@ -208,13 +203,13 @@ class ProjectScreenState extends State<ProjectScreen> {
               child: LangDropdownWidget(
                 options: widget.projectModel.locales.where((element) => element != widget.projectModel.defaultLocale).toList(),
                 labelText: i10n.project_locale,
-                selectedValue: selectedLocale,
+                selectedValue: widget.projectModel.selectedEditLocale,
                 // TODO: remove, how?!
                 width: widthXl - 24,
                 select: (newValue) {
                   var newLocale = LocaleModel.from(MapEntry(newValue?.toString(), TranslateService.countryName2Code[newValue?.toString()]));
                   setState(() {
-                    selectedLocale = newLocale;
+                    widget.projectModel.selectedEditLocale = newLocale;
                   });
                 },
               ),
@@ -224,7 +219,7 @@ class ProjectScreenState extends State<ProjectScreen> {
           ),
           divider(),
           Flexible(
-            child: Text('auto $selectedLocale'),
+            child: Text('auto ${widget.projectModel.selectedEditLocale}'),
             flex: 3,
             fit: FlexFit.tight,
           ),
