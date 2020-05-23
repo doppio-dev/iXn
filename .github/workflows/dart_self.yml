@@ -117,7 +117,7 @@ jobs:
           prerelease: ${{ steps.dist_config.outputs.prerelease }}
 
       - name: Zip Build
-        run: zip -rj macos/build.zip release/macos/
+        run: zip -rj macos/build.zip release/macos/dmg/
 
       - name: Upload Release Asset
         id: upload-release-asset
