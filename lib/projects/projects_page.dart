@@ -29,7 +29,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            _actionsWidget(),
+            if (!kIsWeb) _actionsWidget(),
             Expanded(child: Center(child: Text(i10n.projects_title))),
           ],
         ),

@@ -55,13 +55,13 @@ class _ProjectSettingPageState extends State<ProjectSettingPage> {
               appBar: AppBar(
                 title: Row(
                   children: [
-                    _undoWidget(currentState),
+                    if (!kIsWeb) _undoWidget(currentState),
                     Expanded(
                       child: Center(
                         child: Text(i10n.page_settings),
                       ),
                     ),
-                    _saveWidget(),
+                    if (!kIsWeb) _saveWidget(),
                   ],
                 ),
                 actions: [],
