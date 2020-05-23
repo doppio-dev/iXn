@@ -18,24 +18,16 @@ default_platform(:mac)
 platform :mac do
   desc "Push a new release build to the App Store"
   lane :release do
-    # get_provisioning_profile   # invokes sigh
+    # get_provisioning_profile()   # invokes sigh
 
     build_mac_app(
       workspace: "Runner.xcworkspace", 
       scheme: "Runner",
       output_directory: "../release/macos", # Destination directory. Defaults to current directory.
-      export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-      # export_options: {
-      #   method: "app-store",
-      #   provisioningProfiles: { 
-      #     "dev.doppio.ixn" => "iXn(CL6F555UXF.dev.doppio.ixn)- Mac App Store",
-      #   }
-      # }
+      export_team_id: "CL6F555UXF",
+      export_method: "app-store",
+      # installer_cert_name: "3rd Party Mac Developer Installer: Igor Kravchenko (CL6F555UXF)"
     )
-    # notarize(
-    #   package: "../release/macos", # Path to package to notarize, e.g. .app bundle or disk image
-    #   bundle_id: "dev.doppio.ixn" #CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-    # )
     upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end
 end
