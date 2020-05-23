@@ -21,6 +21,7 @@ platform :mac do
     # get_provisioning_profile()   # invokes sigh
 
     build_mac_app(
+      destination: "generic/platform=macOS",
       workspace: "Runner.xcworkspace", 
       scheme: "Runner",
       output_directory: "../release/macos", # Destination directory. Defaults to current directory.
