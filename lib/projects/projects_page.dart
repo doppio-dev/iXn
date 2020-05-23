@@ -1,5 +1,6 @@
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/projects/index.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -24,54 +25,75 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Widget build(BuildContext context) {
     final i10n = TranslateService().locale;
     return Scaffold(
-        key: Key('projecs_sc'),
-        appBar: AppBar(
-          title: Text(i10n.projects_title),
-          actions: [
-            IconButton(
-              icon: Icon(LineAwesomeIcons.github),
-              onPressed: () async {
-                final url = 'https://github.com/doppio-dev/iXn';
-                if (await canLaunch(url)) {
-                  await launch(url);
-                }
-              },
-            )
+      key: Key('projecs_sc'),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            _actionsWidget(),
+            Expanded(child: Center(child: Text(i10n.projects_title))),
           ],
         ),
-        body: projectsScreen,
-        persistentFooterButtons: <Widget>[
-          Container(
-            width: ContextService().deviceSize.width,
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
-                  },
-                  tooltip: i10n.projects_add,
-                  icon: Icon(Icons.add),
+        actions: [
+          IconButton(
+            icon: Icon(LineAwesomeIcons.github),
+            onPressed: () async {
+              final url = 'https://github.com/doppio-dev/iXn';
+              if (await canLaunch(url)) {
+                await launch(url);
+              }
+            },
+          )
+        ],
+      ),
+      body: projectsScreen,
+      persistentFooterButtons: kIsWeb
+          ? [
+              Container(
+                width: ContextService().deviceSize.width,
+                child: Row(
+                  children: [Expanded(child: _actionsWidget())],
                 ),
-                IconButton(
-                  onPressed: () async {
-                    showRemove = !showRemove;
-                    projectsScreen.projectsBloc.add(ViewProjectsEvent(showRemove: showRemove));
-                  },
-                  tooltip: i10n.projects_show_remove,
-                  icon: Icon(Icons.remove),
-                ),
-                Spacer(),
-                // IconButton(
-                //   onPressed: () async {
-                //     await _import();
-                //   },
-                //   tooltip: i10n.projects_import,
-                //   icon: Icon(Icons.file_download),
-                // ),
-              ],
-            ),
+              ),
+            ]
+          : null,
+    );
+  }
+
+  Widget _actionsWidget() {
+    final i10n = TranslateService().locale;
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () async {
+                  projectsScreen.projectsBloc.add(AddProjectsEvent(projectModel: ProjectModel(id: Uuid().v4())));
+                },
+                tooltip: i10n.projects_add,
+                icon: Icon(Icons.add),
+              ),
+              IconButton(
+                onPressed: () async {
+                  showRemove = !showRemove;
+                  projectsScreen.projectsBloc.add(ViewProjectsEvent(showRemove: showRemove));
+                },
+                tooltip: i10n.projects_show_remove,
+                icon: Icon(Icons.remove),
+              ),
+            ],
           ),
-        ]);
+          // IconButton(
+          //   onPressed: () async {
+          // await _import();
+          //   },
+          //   tooltip: i10n.projects_import,
+          //   icon: Icon(Icons.file_download),
+          // ),
+        ],
+      ),
+    );
   }
 
   // Future _import() async {

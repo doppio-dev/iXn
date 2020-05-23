@@ -29,7 +29,7 @@ class _EditLangWordState extends State<EditLangWord> {
   Widget build(BuildContext context) {
     final i10n = TranslateService().locale;
     final key = widget.projectModel.keys[widget.index];
-    final newkey = '${key.id}${widget.locale.key}';
+    final newkey = '${key.id}${widget.locale?.key}';
     final keyOrigin = '${key.id}${widget.projectModel.defaultLocale.key}';
     var word = widget.projectModel.getWord(newkey, key, widget.locale);
     var wordOrigin = widget.projectModel.getWord(keyOrigin, key, widget.projectModel.defaultLocale);

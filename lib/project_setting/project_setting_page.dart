@@ -1,6 +1,7 @@
 import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,42 +53,62 @@ class _ProjectSettingPageState extends State<ProjectSettingPage> {
             onWillPop: _willPop,
             child: Scaffold(
               appBar: AppBar(
-                title: Text(i10n.page_settings),
+                title: Row(
+                  children: [
+                    _undoWidget(currentState),
+                    Expanded(
+                      child: Center(
+                        child: Text(i10n.page_settings),
+                      ),
+                    ),
+                    _saveWidget(),
+                  ],
+                ),
                 actions: [],
               ),
-              persistentFooterButtons: <Widget>[
-                Container(
-                  width: ContextService().deviceSize.width,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.undo),
-                        onPressed: () {
-                          setState(() {
-                            if (currentState is InProjectSettingState) {
-                              projectModel = currentState.project.copyWith();
-                              projectModelBackup = projectModel == null ? null : projectModel.copyWith();
-                              backuped = true;
-                            }
-                          });
-                        },
-                        tooltip: i10n.discard,
+              persistentFooterButtons: kIsWeb
+                  ? <Widget>[
+                      Container(
+                        width: ContextService().deviceSize.width,
+                        child: Row(
+                          children: [
+                            _undoWidget(currentState),
+                            Spacer(),
+                            _saveWidget(),
+                          ],
+                        ),
                       ),
-                      Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.save),
-                        onPressed: _save,
-                        tooltip: i10n.save,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                    ]
+                  : null,
               body: screen,
             ),
           ),
         );
       },
+    );
+  }
+
+  IconButton _saveWidget() {
+    return IconButton(
+      icon: const Icon(Icons.save),
+      onPressed: _save,
+      tooltip: i10n.save,
+    );
+  }
+
+  IconButton _undoWidget(ProjectSettingState currentState) {
+    return IconButton(
+      icon: const Icon(Icons.undo),
+      onPressed: () {
+        setState(() {
+          if (currentState is InProjectSettingState) {
+            projectModel = currentState.project.copyWith();
+            projectModelBackup = projectModel == null ? null : projectModel.copyWith();
+            backuped = true;
+          }
+        });
+      },
+      tooltip: i10n.discard,
     );
   }
 
@@ -133,6 +154,6 @@ class _ProjectSettingPageState extends State<ProjectSettingPage> {
         ),
       );
     }
-    return Future.value(canPop);
+    return canPop;
   }
 }

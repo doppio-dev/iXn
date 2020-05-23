@@ -1,7 +1,9 @@
 import 'package:doppio_dev_ixn/core/index.dart';
+import 'package:doppio_dev_ixn/generated/l10n.dart';
 import 'package:doppio_dev_ixn/main.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,7 +68,13 @@ class _ProjectPageState extends State<ProjectPage> {
           onWillPop: () => _willPop(currentState as InProjectState),
           child: Scaffold(
             appBar: AppBar(
-              title: Text(i10n.project_name_title(name)),
+              title: Row(
+                children: [
+                  if (!kIsWeb) _addWidget(i10n),
+                  Expanded(child: Center(child: Text(i10n.project_name_title(name)))),
+                  if (!kIsWeb) ..._actionsWidget(),
+                ],
+              ),
               actions: [
                 IconButton(
                   icon: Icon(Icons.settings),
@@ -85,48 +93,63 @@ class _ProjectPageState extends State<ProjectPage> {
                 )
               ],
             ),
-            persistentFooterButtons: <Widget>[
-              Container(
-                width: ContextService().deviceSize.width,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        _addKey();
-                      },
-                      tooltip: i10n.project_add,
-                      icon: Icon(Icons.add),
+            persistentFooterButtons: kIsWeb
+                ? <Widget>[
+                    Container(
+                      width: ContextService().deviceSize.width,
+                      child: Row(
+                        children: [
+                          _addWidget(i10n),
+                          Spacer(),
+                          ..._actionsWidget(),
+                        ],
+                      ),
                     ),
-                    Spacer(),
-                    IconButton(
-                      onPressed: () async {
-                        await projectModel.export();
-                      },
-                      tooltip: i10n.project_export,
-                      icon: Icon(Icons.file_upload),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        await _import();
-                      },
-                      tooltip: i10n.project_import,
-                      icon: Icon(Icons.file_download),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        _projectBloc.add(SaveProjectEvent(projectModel));
-                      },
-                      tooltip: i10n.project_save,
-                      icon: Icon(Icons.save),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                  ]
+                : null,
             body: projectScreen,
           ),
         );
       },
+    );
+  }
+
+  List<Widget> _actionsWidget() {
+    final i10n = TranslateService().locale;
+    return [
+      IconButton(
+        onPressed: () async {
+          await projectModel.export();
+        },
+        tooltip: i10n.project_export,
+        icon: Icon(Icons.file_upload),
+      ),
+      IconButton(
+        onPressed: () async {
+          await _import();
+        },
+        tooltip: i10n.project_import,
+        icon: Icon(Icons.file_download),
+      ),
+      IconButton(
+        onPressed: () async {
+          _projectBloc.add(SaveProjectEvent(projectModel));
+        },
+        tooltip: i10n.project_save,
+        icon: Icon(Icons.save),
+      )
+    ];
+  }
+
+  IconButton _addWidget(S i10n) {
+    return IconButton(
+      onPressed: projectModel?.defaultLocale == null
+          ? null
+          : () async {
+              _addKey();
+            },
+      tooltip: i10n.project_add,
+      icon: Icon(Icons.add),
     );
   }
 
