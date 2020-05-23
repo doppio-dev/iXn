@@ -26,7 +26,25 @@ platform :mac do
       output_directory: "../release/macos", # Destination directory. Defaults to current directory.
       export_team_id: "CL6F555UXF",
       export_method: "app-store",
-      # installer_cert_name: "3rd Party Mac Developer Installer: Igor Kravchenko (CL6F555UXF)"
+      # installer_cert_name: "3rd Party Mac Developer Installer: Igor Kravchenko (CL6F555UXF)",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: { 
+          "dev.doppio.ixn" => "iXn(CL6F555UXF.dev.doppio.ixn)- Mac App Store",
+        }
+      }
+    )
+    upload_to_app_store(skip_metadata: true, skip_screenshots: true)
+  end
+
+  desc "Release from source code on local machine"
+  lane :local do
+    build_mac_app(
+      workspace: "Runner.xcworkspace", 
+      scheme: "Runner",
+      output_directory: "../release/macos", # Destination directory. Defaults to current directory.
+      export_team_id: "CL6F555UXF",
+      export_method: "app-store",
     )
     upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end
