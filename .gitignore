@@ -90,3 +90,6 @@ android/app/release
 android/app/src/debug
 .flutter-plugins-dependencies
 flutter_export_environment.sh
+release/macos/
+macos/FP5K92TYVD.cer
+macos/AppStore_dev.doppio.ixn.mobileprovision

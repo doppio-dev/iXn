@@ -1,0 +1,8 @@
+app_identifier("dev.doppio.ixn") # The bundle identifier of your app
+apple_id("i@gorniv.com") # Your Apple email address
+
+itc_team_id("118027091") # App Store Connect Team ID
+team_id("CL6F555UXF") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
