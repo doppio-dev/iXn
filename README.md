@@ -49,7 +49,7 @@ No, this a product for users who want control localization of apps.
 
 [ ] app settings(locale & theme)
 
-[ ] use DI (kiwi)
+[ ] use DI (get_it)
 
 [ ] Support XCode format files
 
