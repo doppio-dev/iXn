@@ -17,7 +17,7 @@ default_platform(:mac)
 
 platform :mac do
   desc "Push a new release build to the App Store"
-  lane :release do
+  lane :rel_mac do
     # get_provisioning_profile()   # invokes sigh
 
     build_mac_app(

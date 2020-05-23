@@ -1,2 +1,2 @@
 cd macos
-bundle exec fastlane release
+bundle exec fastlane rel_mac

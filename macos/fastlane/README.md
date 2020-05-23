@@ -16,11 +16,16 @@ or alternatively using `brew cask install fastlane`
 
 # Available Actions
 ## Mac
-### mac release
+### mac rel_mac
 ```
-fastlane mac release
+fastlane mac rel_mac
 ```
 Push a new release build to the App Store
+### mac local
+```
+fastlane mac local
+```
+Release from source code on local machine
 
 ----
 
