@@ -20,7 +20,7 @@ platform :mac do
   lane :release do
     # get_provisioning_profile   # invokes sigh
 
-    build_app(
+    build_mac_app(
       workspace: "Runner.xcworkspace", 
       scheme: "Runner",
       output_directory: "../release/macos", # Destination directory. Defaults to current directory.

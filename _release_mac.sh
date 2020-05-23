@@ -1,3 +1,2 @@
-# flutter build macos --release
 cd macos
-fastlane release
+bundle exec fastlane release
