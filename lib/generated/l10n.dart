@@ -413,6 +413,24 @@ class S {
     );
   }
 
+  String get edit_lang_copy {
+    return Intl.message(
+      'copy',
+      name: 'edit_lang_copy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get edit_lang_paste {
+    return Intl.message(
+      'paste',
+      name: 'edit_lang_paste',
+      desc: '',
+      args: [],
+    );
+  }
+
   String get value_required {
     return Intl.message(
       'value required',

@@ -42,6 +42,8 @@
     "notif_need_update" : "Please, update to last version of the app",
     "edit_lang_approve": "Approve after import or change",
     "edit_lang_changed": "Value of default locale was changed",
+    "edit_lang_copy": "copy",
+    "edit_lang_paste": "paste",
     "value_required": "value required",
     "translate_429": "429  for {text}",
     "error_formats" : "Add formats in setting of project"

@@ -8,7 +8,7 @@ class HiveCacheManager {
   String _key = 'cache_v2';
   String _nameLogger = 'HiveCacheManager';
   String _keyTime = 'cache_time_v2';
-  Duration duration = Duration(hours: 8);
+  Duration _duration = Duration(hours: 8);
   final _sm = LocalSemaphore(1);
 
   static HiveCacheManager _instance;
@@ -25,7 +25,7 @@ class HiveCacheManager {
     _key = '${name.toLowerCase()}$_key';
     _nameLogger = '$name$_nameLogger';
     _keyTime = '${name.toLowerCase()}$_keyTime';
-    this.duration = duration;
+    _duration = duration;
   }
 
   Future<void> openAsync() async {
@@ -45,21 +45,7 @@ class HiveCacheManager {
   bool containsKey(String itemId, {bool useExpire = true}) {
     try {
       _sm.acquire();
-      if (useExpire == true && duration != null) {
-        if (!_boxTime.containsKey(itemId)) {
-          return false;
-        }
-        final time = _boxTime.get(itemId) as DateTime;
-        final difference = time.difference(DateTime.now());
-        if (difference > duration) {
-          _boxTime.delete(itemId);
-          return false;
-        }
-      }
-      if (!_box.containsKey(itemId)) {
-        return false;
-      }
-      return true;
+      return _containsKey(itemId, useExpire: useExpire);
     } catch (error, stackTrace) {
       log('$error', name: _nameLogger, error: error, stackTrace: stackTrace);
       return false;
@@ -68,11 +54,32 @@ class HiveCacheManager {
     }
   }
 
+  bool _containsKey(
+    String itemId, {
+    bool useExpire,
+  }) {
+    if (useExpire == true && _duration != null) {
+      if (!_boxTime.containsKey(itemId)) {
+        return false;
+      }
+      final time = _boxTime.get(itemId) as DateTime;
+      final difference = time.difference(DateTime.now());
+      if (difference > _duration) {
+        _boxTime.delete(itemId);
+        return false;
+      }
+    }
+    if (!_box.containsKey(itemId)) {
+      return false;
+    }
+    return true;
+  }
+
   /// offsetExpire - less time save  (if add time)
   Future<void> putAsync(String key, dynamic value, {Duration offsetExpire, bool useExpire = true}) async {
     try {
       await _sm.acquire();
-      if (useExpire == true && duration != null) {
+      if (useExpire == true && _duration != null) {
         var time = DateTime.now();
         if (offsetExpire != null) {
           time.add(offsetExpire);
@@ -97,7 +104,7 @@ class HiveCacheManager {
   Future<dynamic> _getItemAsync(String keyId, {bool useExpire = true}) async {
     try {
       if (useExpire == true) {
-        if (containsKey(keyId, useExpire: useExpire) == false) return null;
+        if (_containsKey(keyId, useExpire: useExpire) == false) return null;
       }
       return await _box.get(keyId);
     } finally {}

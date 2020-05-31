@@ -30,25 +30,34 @@ class _TranslateWordState extends State<TranslateWord> {
   @override
   void initState() {
     super.initState();
-    final key = '${widget.toLocale}${widget.text.hashCode}';
-    cache.getItemAsync(key).then((value) {
-      if (value != null && value.toString().isNullOrEmpty() == false) {
-        setState(() {
-          translatedText = value.toString();
-        });
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final key = '${widget.toLocale}${widget.text.hashCode}';
+    cache.getItemAsync(key).then((value) {
+      if (value != null && value.toString().isNullOrEmpty() == false && value != translatedText) {
+        setState(() {
+          translatedText = value.toString();
+        });
+        return;
+      }
+      if (value == null && translatedText != null) {
+        setState(() {
+          translatedText = null;
+        });
+      }
+    });
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
         GestureDetector(
-          onDoubleTap: () {
-            Clipboard.setData(ClipboardData(text: translatedText));
-            NotificationService.showInfo(TranslateService().locale.notif_clipboard);
+          onDoubleTap: () async {
+            if (translatedText == null) {
+              await _translate();
+            }
+            await Clipboard.setData(ClipboardData(text: translatedText));
+            NotificationService.showInfo(TranslateService().locale.notif_clipboard, duration: Duration(milliseconds: 500));
           },
           child: Container(
             width: widget.width - 48,
@@ -61,30 +70,32 @@ class _TranslateWordState extends State<TranslateWord> {
             Icons.refresh,
             size: 18,
           ),
-          onPressed: () async {
-            final key = '${widget.toLocale}${widget.text.hashCode}';
-            if (widget.text != null && cache.containsKey(key) && key.length < 255) {
-              final cached = await cache.getItemAsync(key);
-              if (cached != null && cached.toString().isNullOrEmpty() == false) {
-                setState(() {
-                  translatedText = cached.toString();
-                });
-                return;
-              }
-            }
-            await Future.delayed(Duration(milliseconds: widget.text.length * 20));
-            var newValue = await widget.translator.translate(widget.text, to: widget.toLocale);
-            if (newValue == null) {
-              NotificationService.showError(TranslateService().locale.translate_429(widget.text));
-              return;
-            }
-            await cache.putAsync(key, newValue);
-            setState(() {
-              translatedText = newValue;
-            });
-          },
+          onPressed: _translate,
         ),
       ],
     );
+  }
+
+  Future _translate() async {
+    final key = '${widget.toLocale}${widget.text.hashCode}';
+    if (widget.text != null && cache.containsKey(key) && key.length < 255) {
+      final cached = await cache.getItemAsync(key);
+      if (cached != null && cached.toString().isNullOrEmpty() == false) {
+        setState(() {
+          translatedText = cached.toString();
+        });
+        return;
+      }
+    }
+    await Future.delayed(Duration(milliseconds: widget.text.length * 20));
+    var newValue = await widget.translator.translate(widget.text, to: widget.toLocale);
+    if (newValue == null) {
+      NotificationService.showError(TranslateService().locale.translate_429(widget.text));
+      return;
+    }
+    await cache.putAsync(key, newValue);
+    setState(() {
+      translatedText = newValue;
+    });
   }
 }

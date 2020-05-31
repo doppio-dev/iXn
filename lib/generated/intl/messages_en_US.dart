@@ -32,6 +32,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discard": MessageLookupByLibrary.simpleMessage("Discard"),
         "edit_lang_approve": MessageLookupByLibrary.simpleMessage("Approve after import or change"),
         "edit_lang_changed": MessageLookupByLibrary.simpleMessage("Value of default locale was changed"),
+        "edit_lang_copy": MessageLookupByLibrary.simpleMessage("copy"),
+        "edit_lang_paste": MessageLookupByLibrary.simpleMessage("paste"),
         "error_error": MessageLookupByLibrary.simpleMessage("Error"),
         "error_formats": MessageLookupByLibrary.simpleMessage("Add formats in setting of project"),
         "error_locale_dublicate": MessageLookupByLibrary.simpleMessage("dublicate locale"),

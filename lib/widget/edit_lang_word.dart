@@ -1,7 +1,9 @@
 import 'package:doppio_dev_ixn/project/index.dart';
 import 'package:doppio_dev_ixn/service/index.dart';
 import 'package:doppio_dev_ixn/core/index.dart';
+import 'package:doppio_dev_ixn/widget/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class EditLangWord extends StatefulWidget {
   const EditLangWord({
@@ -56,6 +58,60 @@ class _EditLangWordState extends State<EditLangWord> {
     if (controller == null || controller.text != word.value) {
       controller = TextEditingController(text: word.value);
     }
+    final sizeIcon = 8.0;
+    return LayoutBuilder(
+      builder: (BuildContext c, BoxConstraints b) {
+        return TransformOnHover(
+          child: Container(width: b.maxWidth, child: _editor(newkey, description, word, wordOrigin, colorDescription)),
+          childHover: Row(
+            children: [
+              Container(
+                width: b.maxWidth - sizeIcon,
+                color: colorDescription,
+                child: _editor(newkey, description, word, wordOrigin, colorDescription),
+              ),
+              Container(
+                height: 40,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        await Clipboard.setData(ClipboardData(text: word.value));
+                      },
+                      child: Tooltip(
+                        message: i10n.edit_lang_copy,
+                        child: Icon(
+                          Icons.content_copy,
+                          size: sizeIcon,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        final value = await Clipboard.getData('text/plain');
+                        _change(word, value?.text, wordOrigin, newkey);
+                      },
+                      child: Tooltip(
+                        message: i10n.edit_lang_paste,
+                        child: Icon(
+                          Icons.content_paste,
+                          size: sizeIcon,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _editor(String newkey, String description, WordModel word, WordModel wordOrigin, Color colorDescription) {
     return Container(
       color: colorDescription,
       child: TextFormField(
@@ -68,16 +124,20 @@ class _EditLangWordState extends State<EditLangWord> {
         controller: controller,
         maxLines: null,
         onChanged: (value) {
-          setState(() {
-            word.value = value;
-            word.origin = wordOrigin.value;
-            widget.projectModel.wordMap[newkey] = word;
-          });
-          if (widget.render != null) {
-            widget.render();
-          }
+          _change(word, value, wordOrigin, newkey);
         },
       ),
     );
+  }
+
+  void _change(WordModel word, String value, WordModel wordOrigin, String newkey) {
+    setState(() {
+      word.value = value;
+      word.origin = wordOrigin.value;
+      widget.projectModel.wordMap[newkey] = word;
+    });
+    if (widget.render != null) {
+      widget.render();
+    }
   }
 }

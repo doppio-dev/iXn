@@ -87,10 +87,7 @@ class ProjectScreenState extends State<ProjectScreen> {
                 widget.projectModel.selectedEditLocale = null;
               }
             }
-            return SingleChildScrollView(
-              child: mainEditor(currentState),
-              controller: scrollController,
-            );
+            return mainEditor(currentState);
           }
           return Center(
             child: CircularProgressIndicator(),
@@ -134,38 +131,42 @@ class ProjectScreenState extends State<ProjectScreen> {
       child: ListView.builder(
         controller: scrollController,
         itemBuilder: (context, index) {
-          return Row(
-            children: [
-              // Flexible(
-              //   child: _tree(index: index),
-              //   flex: 1,
-              //   fit: FlexFit.tight,
-              // ),
-              divider(),
-              Flexible(
-                child: EditKey(projectModel: widget.projectModel, index: index, render: renderUpdate),
-                flex: 1,
-                fit: FlexFit.tight,
-              ),
-              divider(),
-              Flexible(
-                child: EditLangWord(
-                  projectModel: widget.projectModel,
-                  locale: widget.projectModel.defaultLocale,
-                  title: i10n.project_default_locale,
-                  index: index,
-                ),
-                flex: 3,
-                fit: FlexFit.tight,
-              ),
-              divider(),
-              if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty && widget.projectModel.selectedEditLocale != null)
-                ..._editLocale(widget.projectModel.selectedEditLocale.toString(), widget.projectModel.selectedEditLocale, index, widthXl),
-            ],
-          );
+          return _rowItem(i10n, index, widthXl);
         },
         itemCount: length,
       ),
+    );
+  }
+
+  Widget _rowItem(S i10n, int index, double widthXl) {
+    return Row(
+      children: [
+        // Flexible(
+        //   child: _tree(index: index),
+        //   flex: 1,
+        //   fit: FlexFit.tight,
+        // ),
+        divider(),
+        Flexible(
+          child: EditKey(projectModel: widget.projectModel, index: index, render: renderUpdate),
+          flex: 1,
+          fit: FlexFit.tight,
+        ),
+        divider(),
+        Flexible(
+          child: EditLangWord(
+            projectModel: widget.projectModel,
+            locale: widget.projectModel.defaultLocale,
+            title: i10n.project_default_locale,
+            index: index,
+          ),
+          flex: 3,
+          fit: FlexFit.tight,
+        ),
+        divider(),
+        if (widget.projectModel?.locales != null && widget.projectModel.locales.isNotEmpty && widget.projectModel.selectedEditLocale != null)
+          ..._editLocale(widget.projectModel.selectedEditLocale.toString(), widget.projectModel.selectedEditLocale, index, widthXl),
+      ],
     );
   }
 
@@ -267,6 +268,7 @@ class ProjectScreenState extends State<ProjectScreen> {
     final newkey = '${key.id}${widget.projectModel.defaultLocale.key}';
     var word = widget.projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: widget.projectModel.defaultLocale);
     // TODO: remove width
+
     return TranslateWord(translator: translator, text: word.value, toLocale: locale.locale, key: Key('${newkey}_auto'), width: width);
   }
 

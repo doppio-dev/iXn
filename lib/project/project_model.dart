@@ -258,6 +258,8 @@ class ProjectModel extends Equatable {
           final result = <String, String>{};
           words.where((c) => c.locale == locale).map((e) => mapWord[e.keyId] = e.value).toList();
           for (var item in keys) {
+            final temp = mapWord[item.id];
+            if (temp == null) continue;
             // TODO: check - maybe will give bug
             result['"${item.value}"'] = '"${mapWord[item.id].replaceAll('\r', '\\r').replaceAll('\n', '\\n')}"';
           }
