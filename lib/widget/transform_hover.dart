@@ -4,7 +4,7 @@ class TransformOnHover extends StatefulWidget {
   final Widget child;
   final Widget childHover;
   // You can also pass the translation in here if you want to
-  TransformOnHover({Key key, @required this.child, @required this.childHover}) : super(key: key);
+  const TransformOnHover({Key key, @required this.child, @required this.childHover}) : super(key: key);
   @override
   _TransformOnHoverState createState() => _TransformOnHoverState();
 }

@@ -268,8 +268,7 @@ class ProjectScreenState extends State<ProjectScreen> {
     final newkey = '${key.id}${widget.projectModel.defaultLocale.key}';
     var word = widget.projectModel.wordMap[newkey] ?? WordModel(id: Uuid().v4(), keyId: key.id, locale: widget.projectModel.defaultLocale);
     // TODO: remove width
-
-    return TranslateWord(translator: translator, text: word.value, toLocale: locale.locale, key: Key('${newkey}_auto'), width: width);
+    return TranslateWord(translator: translator, text: word.value, toLocale: locale.locale, key: Key('$newkey${locale.locale}_auto'), width: width);
   }
 
   Future<void> _load([bool isError = false]) async {

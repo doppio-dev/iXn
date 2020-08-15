@@ -17,6 +17,26 @@ Create it product every day! - https://medium.com/it-challenge
 
 No, this a product for users who want control localization of apps.
 
+## Work
+install [dart](https://dart.dev/get-dart) 
+```
+ brew tap dart-lang/dart
+ brew install dart
+```
+
+install [pre commit hook](https://pre-commit.com/):
+
+```
+brew install pre-commit
+```
+
+run from project:
+
+```
+pre-commit install
+git add .pre-commit-config.yaml
+```
+
 ## Features
 
 [+] MVP:

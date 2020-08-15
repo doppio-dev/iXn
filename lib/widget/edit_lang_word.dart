@@ -46,7 +46,7 @@ class _EditLangWordState extends State<EditLangWord> {
             setState(() {
               word.origin = wordOrigin.value;
             });
-            widget.render();
+            widget?.render();
           };
         }
       } else {
@@ -62,6 +62,7 @@ class _EditLangWordState extends State<EditLangWord> {
     return LayoutBuilder(
       builder: (BuildContext c, BoxConstraints b) {
         return TransformOnHover(
+          key: Key('${newkey}_on_hover'),
           child: Container(width: b.maxWidth, child: _editor(newkey, description, word, wordOrigin, colorDescription)),
           childHover: Row(
             children: [
@@ -112,10 +113,14 @@ class _EditLangWordState extends State<EditLangWord> {
   }
 
   Widget _editor(String newkey, String description, WordModel word, WordModel wordOrigin, Color colorDescription) {
+    if (newkey == '4e667922-b5d1-42a4-9ec2-2970831f0f7dru-RU') {
+      print('word=${word.value}');
+    }
     return Container(
+      key: Key('${newkey}_container'),
       color: colorDescription,
       child: TextFormField(
-        key: Key('${newkey}_${widget.title}_edit'),
+        key: Key('${newkey}_edit'),
         onTap: () {
           if (description != null) {
             NotificationService.showQuestion(description, notif);

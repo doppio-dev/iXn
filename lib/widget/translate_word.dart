@@ -70,7 +70,7 @@ class _TranslateWordState extends State<TranslateWord> {
             Icons.refresh,
             size: 18,
           ),
-          onPressed: _translate,
+          onPressed: widget.text != null ? _translate : null,
         ),
       ],
     );

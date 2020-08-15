@@ -78,6 +78,9 @@ class ProjectsScreenState extends State<ProjectsScreen> {
               child: Wrap(
                 children: [
                   ...currentState.projects.map((p) => card(p, currentState)).toList(),
+                  Container(
+                    height: 72,
+                  ),
                 ],
               ),
             );

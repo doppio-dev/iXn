@@ -245,6 +245,7 @@ class ProjectModel extends Equatable {
   }
 
   Future export() async {
+    final encoderJson = JsonEncoder.withIndent('  ');
     try {
       if (formats == null || formats.isEmpty) {
         throw Exception(TranslateService().locale.error_formats);
@@ -261,15 +262,17 @@ class ProjectModel extends Equatable {
             final temp = mapWord[item.id];
             if (temp == null) continue;
             // TODO: check - maybe will give bug
-            result['"${item.value}"'] = '"${mapWord[item.id].replaceAll('\r', '\\r').replaceAll('\n', '\\n')}"';
+            result['${item.value}'] = '${mapWord[item.id].replaceAll('\r', '\\r').replaceAll('\n', '\\n').replaceAll('"', '\'')}';
           }
-          final bytes = Utf8Codec().encode(result.toString());
+          final pretty = encoderJson.convert(result);
+          final bytes = Utf8Codec().encode(pretty);
           final fileName =
               '${format.prefix ?? ''}${locale.locale}${format.divider ?? ''}${locale.countryCode}${format.postfix ?? ''}.${format.fileExtension}';
           final archiveFile = ArchiveFile(fileName, bytes.length, bytes);
           archive.addFile(archiveFile);
         }
-        final bytes = Utf8Codec().encode(toJson());
+        final prettyAll = encoderJson.convert(toMap());
+        final bytes = Utf8Codec().encode(prettyAll);
         final archiveFile = ArchiveFile('ixn.json', bytes.length, bytes);
         archive.addFile(archiveFile);
         final bytesZip = encoder.encode(archive);
