@@ -65,6 +65,7 @@ jobs:
         run: sh _release_mac.sh
         env:
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          TEST: ${{ secrets.TEST }}
 
       - name: Build dmg
         run: sh _dmg.sh
