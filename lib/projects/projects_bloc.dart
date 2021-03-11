@@ -12,7 +12,7 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
   factory ProjectsBloc() {
     return _projectsBlocSingleton;
   }
-  ProjectsBloc._internal() {
+  ProjectsBloc._internal() : super(UnProjectsState()) {
     projectSubject = ProjectsRepository().projectSubject.listen((value) {
       add(LoadProjectsEvent());
     });
@@ -24,9 +24,6 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     await projectSubject.cancel();
     await super.close();
   }
-
-  @override
-  ProjectsState get initialState => UnProjectsState();
 
   @override
   Stream<ProjectsState> mapEventToState(

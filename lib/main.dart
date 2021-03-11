@@ -26,7 +26,7 @@ Future<void> init({bool ensureInitialized = true}) async {
     if (ensureInitialized == true) {
       WidgetsFlutterBinding.ensureInitialized();
     }
-    BlocSupervisor.delegate = SimpleBlocDelegate();
+    Bloc.observer = SimpleBlocObserver();
     await ProjectsCacheManager().openAsync();
     await AutoTranslateCacheManager().openAsync();
     appVersion = '0.1.0+1';

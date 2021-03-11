@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:equatable/equatable.dart';
-import 'package:file_manager/file_manager.dart' as manager;
+import 'package:file_selector/file_selector.dart' as manager;
+import 'package:file_selector/file_selector.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -276,7 +279,13 @@ class ProjectModel extends Equatable {
         final archiveFile = ArchiveFile('ixn.json', bytes.length, bytes);
         archive.addFile(archiveFile);
         final bytesZip = encoder.encode(archive);
-        await manager.saveFile('$name-ixn-$index.zip', binaryData: bytesZip);
+
+        final path = await manager.getSavePath(suggestedName: '$name-ixn-$index.zip');
+        final mimeType = 'application/json';
+        final data = Uint8List.fromList(bytesZip);
+        final file = XFile.fromData(data, name: name, mimeType: mimeType);
+        await file.saveTo(path);
+
         index++;
       }
       // projectScreen.import(filesData);

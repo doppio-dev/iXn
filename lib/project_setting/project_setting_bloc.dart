@@ -5,14 +5,13 @@ import 'package:bloc/bloc.dart';
 import 'package:doppio_dev_ixn/project_setting/index.dart';
 
 class ProjectSettingBloc extends Bloc<ProjectSettingEvent, ProjectSettingState> {
+  ProjectSettingBloc() : super(UnProjectSettingState(0));
+
   @override
   Future<void> close() async {
     // dispose objects
     await super.close();
   }
-
-  @override
-  ProjectSettingState get initialState => UnProjectSettingState(0);
 
   @override
   Stream<ProjectSettingState> mapEventToState(

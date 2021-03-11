@@ -15,14 +15,11 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     await super.close();
   }
 
-  ProjectBloc() {
+  ProjectBloc() : super(UnProjectState(0)) {
     projectSubject = ProjectsRepository().projectSubject.listen((value) {
       add(LoadSettingProjectEvent(value.id));
     });
   }
-
-  @override
-  ProjectState get initialState => UnProjectState(0);
 
   @override
   Stream<ProjectState> mapEventToState(

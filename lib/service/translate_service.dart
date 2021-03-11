@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:doppio_dev_ixn/generated/l10n.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/widgets.dart';
-import 'package:file_access/file_access.dart' as file_access;
+// import 'package:file_access/file_access.dart' as file_access;
+import 'package:file_selector/file_selector.dart' as file_access;
+
 import 'package:path/path.dart' as path;
 
 class TranslateService {
@@ -441,7 +444,9 @@ class TranslateService {
   };
 
   Future<Map<String, Map<String, String>>> importFiles() async {
-    final newFiles = (await file_access.open(true, false, allowedTypes: ['json', 'arb']));
+    final newFiles = (await file_access.openFiles(acceptedTypeGroups: [
+      XTypeGroup(extensions: ['json', 'arb'])
+    ]));
     final filesData = <String, Map<String, String>>{};
     if (newFiles == null || newFiles.isEmpty) {
       return null;

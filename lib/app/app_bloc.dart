@@ -9,7 +9,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   factory AppBloc() {
     return _appBlocSingleton;
   }
-  AppBloc._internal();
+  AppBloc._internal() : super(UnAppState());
 
   @override
   Future<void> close() async {
@@ -17,9 +17,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await _appBlocSingleton.close();
     await super.close();
   }
-
-  @override
-  AppState get initialState => UnAppState();
 
   @override
   Stream<AppState> mapEventToState(
