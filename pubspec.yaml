@@ -46,15 +46,7 @@ dependencies:
   bot_toast: 4.0.0+1
   file_selector: 0.8.0
   file_selector_web: 0.8.0
-
-  # file_access:
-  #   git: https://github.com/Gorniv/file_access
-
-  # file_manager:
-  #   git: 
-  #     url: https://github.com/rodydavis/file_manager
-  #     ref: master
-  #     path: file_manager
+  file_selector_macos: 0.0.4
 
   archive: 3.1.2
   line_awesome_icons: 1.0.4+2
