@@ -32,6 +32,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
   ProjectSettingScreenState();
   final i10n = TranslateService().locale;
   List<LocaleModel> locales;
+  bool init = true;
 
   @override
   void initState() {
@@ -59,7 +60,10 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
           ContextService().buidlContext(context);
           final i10n = TranslateService().locale;
           if (currentState is UnProjectSettingState) {
-            _load(context);
+            if (init) {
+              _load(context);
+              init = false;
+            }
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -317,7 +321,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
     if (args == null) {
       print('args==null');
     }
-    final id = args['id'] as String;
+    final id = args['id']?.toString();
     widget._projectSettingBloc.add(LoadProjectSettingEvent(id));
   }
 }

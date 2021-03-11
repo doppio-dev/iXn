@@ -39,7 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "error_locale_dublicate": MessageLookupByLibrary.simpleMessage("dublicate locale"),
         "error_locale_notsupport": m0,
         "error_reload": MessageLookupByLibrary.simpleMessage("Reload"),
-        "error_unsaved": MessageLookupByLibrary.simpleMessage("The form contains some unsaved changes.\r\nDo you want to save all entered data?"),
+        "error_unsaved": MessageLookupByLibrary.simpleMessage("The form contains some unsaved changes.\nDo you want to save all entered data?"),
         "notif_clipboard": MessageLookupByLibrary.simpleMessage("Text copied to buffer"),
         "notif_need_update": MessageLookupByLibrary.simpleMessage("Please, update to last version of the app"),
         "notif_ok": MessageLookupByLibrary.simpleMessage("Ok"),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:doppio_dev_ixn/generated/l10n.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 // import 'package:file_access/file_access.dart' as file_access;
 import 'package:file_selector/file_selector.dart' as file_access;
@@ -452,7 +453,7 @@ class TranslateService {
       return null;
     }
     for (var item in newFiles) {
-      var name = path.basenameWithoutExtension(item.path);
+      var name = path.basenameWithoutExtension(item.name);
       var splits = name.replaceAll('intl_', '').replaceAll('_', '-').replaceAll('.', '-').split('-');
       if (splits.length < 2) {
         final country = TranslateService.localeCountry[splits[0]];

@@ -8,8 +8,14 @@ import 'intl/messages_all.dart';
 // Made by Localizely
 // **************************************************************************
 
+// ignore_for_file: non_constant_identifier_names, lines_longer_than_80_chars
+// ignore_for_file: join_return_with_assignment, prefer_final_in_for_each
+// ignore_for_file: avoid_redundant_argument_values
+
 class S {
   S();
+
+  static S current;
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
@@ -18,7 +24,9 @@ class S {
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
-      return S();
+      S.current = S();
+
+      return S.current;
     });
   }
 
@@ -26,6 +34,7 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Name`
   String get projects_card_name {
     return Intl.message(
       'Name',
@@ -35,6 +44,7 @@ class S {
     );
   }
 
+  /// `Locale`
   String get projects_card_locale {
     return Intl.message(
       'Locale',
@@ -44,6 +54,7 @@ class S {
     );
   }
 
+  /// `Locale`
   String get project_locale {
     return Intl.message(
       'Locale',
@@ -53,6 +64,7 @@ class S {
     );
   }
 
+  /// `Supported Locales`
   String get projects_card_locales {
     return Intl.message(
       'Supported Locales',
@@ -62,6 +74,7 @@ class S {
     );
   }
 
+  /// `Project Name`
   String get project_name {
     return Intl.message(
       'Project Name',
@@ -71,6 +84,7 @@ class S {
     );
   }
 
+  /// `Key`
   String get project_key {
     return Intl.message(
       'Key',
@@ -80,6 +94,7 @@ class S {
     );
   }
 
+  /// `Default Locale`
   String get project_default_locale {
     return Intl.message(
       'Default Locale',
@@ -89,6 +104,7 @@ class S {
     );
   }
 
+  /// `Reload`
   String get error_reload {
     return Intl.message(
       'Reload',
@@ -98,6 +114,7 @@ class S {
     );
   }
 
+  /// `Save`
   String get save {
     return Intl.message(
       'Save',
@@ -107,6 +124,7 @@ class S {
     );
   }
 
+  /// `Close`
   String get close {
     return Intl.message(
       'Close',
@@ -116,6 +134,7 @@ class S {
     );
   }
 
+  /// `Save changes`
   String get save_data {
     return Intl.message(
       'Save changes',
@@ -125,6 +144,7 @@ class S {
     );
   }
 
+  /// `Discard`
   String get discard {
     return Intl.message(
       'Discard',
@@ -134,15 +154,17 @@ class S {
     );
   }
 
+  /// `The form contains some unsaved changes.\nDo you want to save all entered data?`
   String get error_unsaved {
     return Intl.message(
-      'The form contains some unsaved changes.\r\nDo you want to save all entered data?',
+      'The form contains some unsaved changes.\nDo you want to save all entered data?',
       name: 'error_unsaved',
       desc: '',
       args: [],
     );
   }
 
+  /// `Project Settings`
   String get page_settings {
     return Intl.message(
       'Project Settings',
@@ -152,6 +174,7 @@ class S {
     );
   }
 
+  /// `dublicate locale`
   String get error_locale_dublicate {
     return Intl.message(
       'dublicate locale',
@@ -161,6 +184,7 @@ class S {
     );
   }
 
+  /// `Locale {locale} from file {path} doesnt supported. Use name of file like 'intl_ko_KR.arb' or 'ko-KR.json' where 'ko' - target locale`
   String error_locale_notsupport(Object locale, Object path) {
     return Intl.message(
       'Locale $locale from file $path doesnt supported. Use name of file like \'intl_ko_KR.arb\' or \'ko-KR.json\' where \'ko\' - target locale',
@@ -170,6 +194,7 @@ class S {
     );
   }
 
+  /// `No name`
   String get project_name_no {
     return Intl.message(
       'No name',
@@ -179,6 +204,7 @@ class S {
     );
   }
 
+  /// `Project: {name}`
   String project_name_title(Object name) {
     return Intl.message(
       'Project: $name',
@@ -188,6 +214,7 @@ class S {
     );
   }
 
+  /// `Add`
   String get project_add {
     return Intl.message(
       'Add',
@@ -197,6 +224,7 @@ class S {
     );
   }
 
+  /// `Export`
   String get project_export {
     return Intl.message(
       'Export',
@@ -206,6 +234,7 @@ class S {
     );
   }
 
+  /// `Import`
   String get project_import {
     return Intl.message(
       'Import',
@@ -215,6 +244,7 @@ class S {
     );
   }
 
+  /// `Save`
   String get project_save {
     return Intl.message(
       'Save',
@@ -224,6 +254,7 @@ class S {
     );
   }
 
+  /// `Error`
   String get error_error {
     return Intl.message(
       'Error',
@@ -233,6 +264,7 @@ class S {
     );
   }
 
+  /// `Please, add new key for control Localizations of your app`
   String get project_empty {
     return Intl.message(
       'Please, add new key for control Localizations of your app',
@@ -242,6 +274,7 @@ class S {
     );
   }
 
+  /// `Export settings`
   String get project_setting_export {
     return Intl.message(
       'Export settings',
@@ -251,6 +284,7 @@ class S {
     );
   }
 
+  /// `Please add export setting`
   String get project_setting_export_empty {
     return Intl.message(
       'Please add export setting',
@@ -260,6 +294,7 @@ class S {
     );
   }
 
+  /// `Prefix`
   String get project_setting_prefix {
     return Intl.message(
       'Prefix',
@@ -269,6 +304,7 @@ class S {
     );
   }
 
+  /// `Postfix`
   String get project_setting_postfix {
     return Intl.message(
       'Postfix',
@@ -278,6 +314,7 @@ class S {
     );
   }
 
+  /// `Divider locale and country code`
   String get project_setting_divider {
     return Intl.message(
       'Divider locale and country code',
@@ -287,6 +324,7 @@ class S {
     );
   }
 
+  /// `File exteshion`
   String get project_setting_ext {
     return Intl.message(
       'File exteshion',
@@ -296,6 +334,7 @@ class S {
     );
   }
 
+  /// `Filter for supported locales`
   String get project_setting_filter {
     return Intl.message(
       'Filter for supported locales',
@@ -305,6 +344,7 @@ class S {
     );
   }
 
+  /// `Projects`
   String get projects_title {
     return Intl.message(
       'Projects',
@@ -314,6 +354,7 @@ class S {
     );
   }
 
+  /// `Add`
   String get projects_add {
     return Intl.message(
       'Add',
@@ -323,6 +364,7 @@ class S {
     );
   }
 
+  /// `Show remove button`
   String get projects_show_remove {
     return Intl.message(
       'Show remove button',
@@ -332,6 +374,7 @@ class S {
     );
   }
 
+  /// `Import`
   String get projects_import {
     return Intl.message(
       'Import',
@@ -341,6 +384,7 @@ class S {
     );
   }
 
+  /// `Please, add new project for control Localizations of your apps`
   String get projects_emprty {
     return Intl.message(
       'Please, add new project for control Localizations of your apps',
@@ -350,6 +394,7 @@ class S {
     );
   }
 
+  /// `Remove`
   String get projects_remove {
     return Intl.message(
       'Remove',
@@ -359,6 +404,7 @@ class S {
     );
   }
 
+  /// `Ok`
   String get notif_ok {
     return Intl.message(
       'Ok',
@@ -368,6 +414,7 @@ class S {
     );
   }
 
+  /// `Text copied to buffer`
   String get notif_clipboard {
     return Intl.message(
       'Text copied to buffer',
@@ -377,6 +424,7 @@ class S {
     );
   }
 
+  /// `Update`
   String get notif_update {
     return Intl.message(
       'Update',
@@ -386,6 +434,7 @@ class S {
     );
   }
 
+  /// `Please, update to last version of the app`
   String get notif_need_update {
     return Intl.message(
       'Please, update to last version of the app',
@@ -395,6 +444,7 @@ class S {
     );
   }
 
+  /// `Approve after import or change`
   String get edit_lang_approve {
     return Intl.message(
       'Approve after import or change',
@@ -404,6 +454,7 @@ class S {
     );
   }
 
+  /// `Value of default locale was changed`
   String get edit_lang_changed {
     return Intl.message(
       'Value of default locale was changed',
@@ -413,6 +464,7 @@ class S {
     );
   }
 
+  /// `copy`
   String get edit_lang_copy {
     return Intl.message(
       'copy',
@@ -422,6 +474,7 @@ class S {
     );
   }
 
+  /// `paste`
   String get edit_lang_paste {
     return Intl.message(
       'paste',
@@ -431,6 +484,7 @@ class S {
     );
   }
 
+  /// `value required`
   String get value_required {
     return Intl.message(
       'value required',
@@ -440,6 +494,7 @@ class S {
     );
   }
 
+  /// `429  for {text}`
   String translate_429(Object text) {
     return Intl.message(
       '429  for $text',
@@ -449,6 +504,7 @@ class S {
     );
   }
 
+  /// `Add formats in setting of project`
   String get error_formats {
     return Intl.message(
       'Add formats in setting of project',

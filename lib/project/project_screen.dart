@@ -33,6 +33,7 @@ class ProjectScreenState extends State<ProjectScreen> {
 
   ProjectScreenState();
   bool changeSettings;
+  bool init = true;
 
   @override
   void initState() {
@@ -54,7 +55,10 @@ class ProjectScreenState extends State<ProjectScreen> {
         ) {
           ContextService().buidlContext(context);
           if (currentState is UnProjectState) {
-            _load();
+            if (init) {
+              _load();
+              init = false;
+            }
             return Center(
               child: CircularProgressIndicator(),
             );
