@@ -41,6 +41,7 @@ jobs:
           fqdn: ixn.doppio.dev
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
   build_mac_os:
     runs-on: self-hosted
@@ -60,7 +61,9 @@ jobs:
 
       - name: Install create-dmg
         run: brew install create-dmg
-
+     
+      - name: echo
+        run: echo _release_mac.sh
       - name: Build macos release
         run: sh _release_mac.sh
 
