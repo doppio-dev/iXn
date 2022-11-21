@@ -137,14 +137,14 @@ class _ProjectSettingPageState extends State<ProjectSettingPage> {
           ),
           content: Text(i10n.error_unsaved),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   _save();
                   navigatorKey.currentState.pop();
                   canPop = true;
                 },
                 child: Text(i10n.save)),
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   navigatorKey.currentState.pop();
                   canPop = true;

@@ -56,7 +56,7 @@ class _AppPageState extends State<AppPage> with WidgetsBindingObserver {
           primaryColor: brightness == Brightness.dark ? Colors.black : Colors.white,
           accentColor: brightness == Brightness.dark ? Colors.white : Colors.black,
           brightness: brightness == Brightness.dark ? Brightness.dark : Brightness.light,
-          textSelectionColor: Colors.blue,
+          selectedRowColor: Colors.blue,
           // fontFamily: 'OpenSans'
         );
         return MaterialApp(

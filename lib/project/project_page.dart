@@ -169,14 +169,14 @@ class _ProjectPageState extends State<ProjectPage> {
           ),
           content: Text(i10n.error_unsaved),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   _projectBloc.add(SaveProjectEvent(projectModel));
                   navigatorKey.currentState.pop();
                   canPop = true;
                 },
                 child: Text(i10n.save)),
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   navigatorKey.currentState.pop();
                   canPop = true;

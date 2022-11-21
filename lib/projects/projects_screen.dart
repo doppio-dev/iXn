@@ -60,8 +60,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
                 Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
-                  child: RaisedButton(
-                    color: Colors.blue,
+                  child: ElevatedButton(
                     child: Text(i10n.error_reload),
                     onPressed: _load,
                   ),
@@ -123,8 +122,7 @@ class ProjectsScreenState extends State<ProjectsScreen> {
                 if (currentState.showRemove == true)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
-                      color: Colors.red,
+                    child: ElevatedButton(
                       child: Text(i10n.projects_remove),
                       onPressed: () {
                         widget.projectsBloc.add(RemoveProjectsEvent(projectModel: e));

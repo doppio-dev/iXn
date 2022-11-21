@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doppio_dev_ixn/core/logger.dart' as developer;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SimpleBlocObserver extends BlocObserver {
   @override
@@ -15,7 +15,7 @@ class SimpleBlocObserver extends BlocObserver {
   }
 
   @override
-  void onError(Bloc<dynamic, dynamic> bloc, Object error, StackTrace stackTrace) {
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     developer.log('$error', name: bloc.runtimeType.toString(), error: error, stackTrace: stackTrace);
     super.onError(bloc, error, stackTrace);
   }

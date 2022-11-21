@@ -31,7 +31,7 @@ class NotificationService {
               Spacer(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     cancelFunc();
                     onDone();
@@ -65,7 +65,7 @@ class NotificationService {
               Spacer(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () async {
                     cancelFunc();
                     final url = 'https://github.com/doppio-dev/iXn/releases';

@@ -72,8 +72,7 @@ class ProjectScreenState extends State<ProjectScreen> {
                 Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
-                  child: RaisedButton(
-                    color: Colors.blue,
+                  child: ElevatedButton(
                     child: Text(i10n.error_reload),
                     onPressed: _load,
                   ),

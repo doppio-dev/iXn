@@ -76,8 +76,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
                 Text(currentState.errorMessage ?? i10n.error_error),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
-                  child: RaisedButton(
-                    color: Colors.blue,
+                  child: ElevatedButton(
                     child: Text(i10n.error_reload),
                     onPressed: () {
                       _load(context);
@@ -108,7 +107,7 @@ class ProjectSettingScreenState extends State<ProjectSettingScreen> {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Form(
-        autovalidate: widget.autoValidate,
+        autovalidateMode: widget.autoValidate ? AutovalidateMode.always : AutovalidateMode.onUserInteraction,
         key: widget.formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
