@@ -1,3 +1,4 @@
+deprecated, terrible code :D try look [aso.dev](https://aso.dev) 
 # iXn
 
 Control your localization of apps with iXn!
